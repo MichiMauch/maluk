@@ -121,6 +121,18 @@ export const partners: Partner[] = [
       alt: "Marti",
     },
   },
+  {
+    _id: "partner-010",
+    _type: "partner",
+    slug: { current: "wirz-schriften" },
+    name: "Wirz Schriften",
+    tier: "silver",
+    logo: {
+      url: "/images/sponsors/wirz-schriften.svg",
+      alt: "Wirz Schriften",
+    },
+    website: "https://wirz-schriften.ch",
+  },
 ];
 
 export const club100Stats = {

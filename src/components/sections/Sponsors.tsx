@@ -21,7 +21,7 @@ export function Sponsors() {
           {partners.map((partner, index) => (
             <motion.div
               key={partner._id}
-              className="group"
+              className="group cursor-pointer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -33,7 +33,7 @@ export function Sponsors() {
                   href={partner.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block"
+                  className="block cursor-pointer"
                   title={partner.name}
                 >
                   <SponsorContent partner={partner} />
