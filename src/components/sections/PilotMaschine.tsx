@@ -9,9 +9,9 @@ import { pilot, car } from "@/data/pilot";
 
 const statIcons: Record<string, string> = {
   Saisons: "calendar_month",
-  Starts: "flag",
+  Rennen: "flag",
   Podestplätze: "emoji_events",
-  Siege: "military_tech",
+  "Beste Platzierung": "workspace_premium",
 };
 
 export function PilotMaschine() {
@@ -114,7 +114,14 @@ export function PilotMaschine() {
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {car.video ? (
+                  {car.video && 'youtubeId' in car.video ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${car.video.youtubeId}?start=${car.video.start || 0}&autoplay=1&mute=1&loop=1&playlist=${car.video.youtubeId}&controls=0&modestbranding=1`}
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full border-0 scale-[1.5]"
+                    />
+                  ) : car.video && 'url' in car.video ? (
                     <video
                       src={car.video.url}
                       autoPlay

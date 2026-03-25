@@ -3,16 +3,16 @@
 import { motion } from "framer-motion";
 
 const navigationLinks = [
-  { label: "Team Profile", href: "#" },
-  { label: "Car Specs", href: "#" },
-  { label: "Season 2024", href: "#calendar" },
-  { label: "Press Kit", href: "#" },
+  { label: "Home", href: "#" },
+  { label: "Pilot", href: "#pilot" },
+  { label: "Rennkalender", href: "#calendar" },
+  { label: "Club 100", href: "#club100" },
+  { label: "Challenge", href: "#challenge" },
 ];
 
 const socialLinks = [
-  { label: "IG", href: "https://instagram.com" },
-  { label: "YT", href: "https://youtube.com" },
-  { label: "X", href: "https://x.com" },
+  { label: "IG", href: "https://www.instagram.com/malukracing/" },
+  { label: "YT", href: "https://www.youtube.com/@malukracing" },
 ];
 
 export function Footer() {
@@ -33,8 +33,8 @@ export function Footer() {
               </h2>
             </div>
             <p className="text-gray-400 text-sm max-w-sm mb-6">
-              Professional Hillclimb Racing Team based in Switzerland. Dedicated
-              to precision, speed, and the pursuit of the perfect run.
+              Bergrennen-Team aus der Schweiz. Leidenschaft f&uuml;r Pr&auml;zision,
+              Geschwindigkeit und den perfekten Lauf.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((link) => (
@@ -86,7 +86,7 @@ export function Footer() {
             transition={{ delay: 0.2 }}
           >
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
-              Contact
+              Kontakt
             </h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li className="flex items-center gap-2">
@@ -124,14 +124,14 @@ export function Footer() {
           transition={{ delay: 0.3 }}
         >
           <p className="text-gray-600 text-xs">
-            © {new Date().getFullYear()} MALUK Racing. All rights reserved.
+            &copy; {new Date().getFullYear()} MALUK Racing. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6 text-xs text-gray-600">
             <a href="#" className="hover:text-gray-400">
-              Privacy Policy
+              Datenschutz
             </a>
             <a href="#" className="hover:text-gray-400">
-              Terms of Service
+              Impressum
             </a>
           </div>
         </motion.div>

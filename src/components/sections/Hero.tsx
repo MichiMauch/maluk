@@ -1,15 +1,19 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 import { Button, MaterialIcon } from "@/components/ui";
 
 const stats = [
-  { label: "Höchstgeschwindigkeit", value: "245", unit: "KM/H" },
-  { label: "G-Kraft", value: "3.2", unit: "G" },
-  { label: "Podestplätze", value: "14", unit: "Gesamt" },
+  { label: "Baujahr", value: "1979", unit: "" },
+  { label: "Gewicht", value: "905", unit: "kg inkl. Fahrer" },
+  { label: "Motor", value: "2.0", unit: "16V BEWA-Technik" },
 ];
 
 export function Hero() {
+  const [videoOpen, setVideoOpen] = useState(false);
+
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden pt-16">
       {/* Dark Background */}
@@ -84,10 +88,12 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <Button variant="primary" skewed icon="arrow_forward">
-              Aktuelle Ergebnisse
-            </Button>
-            <Button variant="secondary" skewed>
+            <a href="#calendar">
+              <Button variant="primary" skewed icon="arrow_forward">
+                Aktuelle Saison
+              </Button>
+            </a>
+            <Button variant="secondary" skewed onClick={() => setVideoOpen(true)}>
               Onboard ansehen
             </Button>
           </motion.div>
@@ -118,6 +124,54 @@ export function Hero() {
           ))}
         </motion.div>
       </div>
+
+      {/* Onboard Video Lightbox */}
+      {typeof window !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {videoOpen && (
+              <motion.div
+                key="onboard-backdrop"
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+                onClick={() => setVideoOpen(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className="relative mx-4 w-full max-w-5xl"
+                  onClick={(e) => e.stopPropagation()}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <button
+                    onClick={() => setVideoOpen(false)}
+                    className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors text-sm flex items-center gap-1 z-10"
+                  >
+                    <span>Schliessen</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                  </button>
+
+                  <div className="aspect-video rounded-lg overflow-hidden bg-black">
+                    <iframe
+                      src="https://www.youtube.com/embed/TPiVAVzI2Cs?autoplay=1"
+                      title="Onboard Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
     </section>
   );
 }

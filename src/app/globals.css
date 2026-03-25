@@ -18,6 +18,10 @@
   --foreground: #ffffff;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* ===== Base Styles ===== */
 body {
   background: var(--background);
