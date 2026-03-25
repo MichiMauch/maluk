@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { Button, MaterialIcon } from "@/components/ui";
+import Image from "next/image";
+import { partners } from "@/data/partners";
 
 const stats = [
   { label: "Baujahr", value: "1979", unit: "" },
@@ -98,6 +100,54 @@ export function Hero() {
             </Button>
           </motion.div>
         </div>
+
+        {/* Sponsor Carousel */}
+        <motion.div
+          className="absolute bottom-10 left-6 lg:left-10 hidden lg:block max-w-xs"
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.9 }}
+        >
+          <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">Unsere Partner</p>
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-obsidian to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-obsidian to-transparent z-10 pointer-events-none" />
+            <div className="flex gap-8 animate-[hero-scroll_20s_linear_infinite] w-max">
+              {[...partners, ...partners].map((partner, i) => {
+                const content = partner.logo ? (
+                  <div
+                    className="relative h-7 w-20 flex-shrink-0 transition-opacity hover:opacity-100"
+                    style={{ filter: "brightness(0) invert(1) opacity(0.6)" }}
+                  >
+                    <Image
+                      src={partner.logo.url}
+                      alt={partner.logo.alt}
+                      fill
+                      className="object-contain"
+                      sizes="80px"
+                    />
+                  </div>
+                ) : null;
+                if (!content) return null;
+                return partner.website ? (
+                  <a
+                    key={`${partner._id}-${i}`}
+                    href={partner.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer flex-shrink-0"
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <div key={`${partner._id}-${i}`} className="flex-shrink-0">
+                    {content}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
 
         {/* Stats */}
         <motion.div
