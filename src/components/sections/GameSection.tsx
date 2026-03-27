@@ -74,7 +74,7 @@ export function GameSection() {
   const top5 = leaderboard.slice(0, 5);
 
   return (
-    <section id="challenge" className="w-full max-w-[1280px] px-4 md:px-10 py-16">
+    <section id="challenge" className="w-full max-w-[1280px] px-4 md:px-10 py-16 overflow-hidden">
       <motion.div
         className="relative rounded-2xl overflow-hidden border border-primary/20 bg-gradient-to-br from-[#1a0f0a] to-[#0f0506]"
         initial={{ opacity: 0, y: 40 }}
@@ -85,7 +85,7 @@ export function GameSection() {
         {/* Glow Effect */}
         <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full" />
 
-        <div className="grid lg:grid-cols-2 gap-10 p-8 md:p-12 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-10 p-4 sm:p-8 md:p-12 relative z-10">
           {/* Left Column - Title, Description & Game */}
           <div className="space-y-6">
             <motion.div
