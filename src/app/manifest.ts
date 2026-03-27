@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "MALUK",
     description: "Bergrennen-Pilot Lukas Maurer und sein Opel Kadett C GT/E",
     start_url: "/",
-    display: "standalone",
+    display: "browser",
     background_color: "#0f0506",
     theme_color: "#FFD600",
     icons: [
