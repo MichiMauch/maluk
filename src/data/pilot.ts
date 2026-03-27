@@ -32,7 +32,7 @@ export const pilot: Pilot = {
 export const car: Car = {
   name: "Opel Kadett C GT/E Gruppe Interswiss",
   image: { url: "/images/car.webp", alt: "Opel Kadett C GT/E Gruppe Interswiss" },
-  video: { youtubeId: "jEnxDvkGf6w", start: 73 },
+  video: { url: "/videos/car-loop.webm" },
   description: "1994–2006 CH-Meisterschaft mit Roger Kissling. 2020–2023 Neuaufbau in über 1000 Arbeitsstunden. Ab 2023 Slalom und Bergrennen mit Lukas Maurer.",
   techSpecs: [
     { label: "Baujahr", value: "1979" },

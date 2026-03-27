@@ -85,14 +85,28 @@ export function Header() {
                         key={link.label}
                         href={link.href}
                         className="text-gray-300 hover:text-primary text-sm font-medium py-2 transition-colors"
-                        onClick={() => setMenuOpen(false)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setMenuOpen(false);
+                          const target = document.querySelector(link.href);
+                          if (target) {
+                            setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 150);
+                          } else if (link.href === "#") {
+                            setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 150);
+                          }
+                        }}
                       >
                         {link.label}
                       </a>
                     ))}
                   </div>
                   <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-                    <a href="#club100" onClick={() => setMenuOpen(false)}>
+                    <a href="#club100" onClick={(e) => {
+                      e.preventDefault();
+                      setMenuOpen(false);
+                      const target = document.querySelector("#club100");
+                      if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth" }), 150);
+                    }}>
                       <Button size="sm" variant="outline" className="w-full">
                         Member werden
                       </Button>
