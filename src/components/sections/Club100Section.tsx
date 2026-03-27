@@ -192,6 +192,7 @@ export function Club100Section() {
               <Button
                 variant="gradient"
                 className="w-full"
+                type="submit"
               >
                 {loading ? "Wird gesendet..." : "Absenden"}
               </Button>

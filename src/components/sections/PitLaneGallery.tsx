@@ -9,6 +9,7 @@ import { galleryImages, type GalleryImage } from "@/data/gallery";
 
 const SCROLL_SPEED = 40; // px per second
 const CLICK_THRESHOLD = 5; // px – max movement to count as a click
+const doubledImages = [...galleryImages, ...galleryImages];
 
 export function PitLaneGallery() {
   const [isPaused, setIsPaused] = useState(false);
@@ -138,9 +139,6 @@ export function PitLaneGallery() {
     [controls, clampX],
   );
 
-  // The doubled array used for infinite scroll
-  const doubledImages = [...galleryImages, ...galleryImages];
-
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
       if (!dragging.current) return;
@@ -169,7 +167,7 @@ export function PitLaneGallery() {
       const currentX = getCurrentX();
       startAnimation(currentX);
     },
-    [getCurrentX, startAnimation, doubledImages],
+    [getCurrentX, startAnimation],
   );
 
   return (

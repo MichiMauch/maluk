@@ -12,6 +12,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   skewed?: boolean;
   className?: string;
+  type?: "button" | "submit" | "reset";
   onClick?: () => void;
   href?: string;
 }
@@ -24,6 +25,7 @@ export function Button({
   iconPosition = "right",
   skewed = false,
   className = "",
+  type = "button",
   onClick,
   href,
 }: ButtonProps) {
@@ -79,6 +81,7 @@ export function Button({
 
   return (
     <motion.button
+      type={type}
       className={combinedStyles}
       onClick={onClick}
       whileHover={{ scale: variant === "gradient" ? 1.05 : 1 }}

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { Resend } from "resend";
+import { escapeHtml } from "@/lib/sanitize";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "club100-members.json");
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
         from: "Club 100 <onboarding@resend.dev>",
         to: process.env.NOTIFICATION_EMAIL,
         subject: "Neues Club 100 Mitglied",
-        html: `<p>Neues Club 100 Mitglied: <strong>${email}</strong></p><p>Datum: ${formatted}</p>`,
+        html: `<p>Neues Club 100 Mitglied: <strong>${escapeHtml(email)}</strong></p><p>Datum: ${formatted}</p>`,
       }).catch(() => {
         // Fehler beim Mailversand ignorieren — E-Mail ist bereits gespeichert
       });

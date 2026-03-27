@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { Resend } from "resend";
+import { escapeHtml } from "@/lib/sanitize";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "sponsor-inquiries.json");
@@ -62,11 +63,11 @@ export async function POST(request: Request) {
         subject: "Neue Sponsor-Anfrage",
         html: `
           <h2>Neue Sponsor-Anfrage</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Firma:</strong> ${company || "–"}</p>
-          <p><strong>Telefon:</strong> ${phone || "–"}</p>
-          <p><strong>E-Mail:</strong> ${email}</p>
-          <p><strong>Nachricht:</strong> ${message || "–"}</p>
+          <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+          <p><strong>Firma:</strong> ${escapeHtml(company || "–")}</p>
+          <p><strong>Telefon:</strong> ${escapeHtml(phone || "–")}</p>
+          <p><strong>E-Mail:</strong> ${escapeHtml(email)}</p>
+          <p><strong>Nachricht:</strong> ${escapeHtml(message || "–")}</p>
           <p><strong>Datum:</strong> ${formatted}</p>
         `,
       }).catch(() => {});

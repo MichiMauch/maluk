@@ -230,7 +230,7 @@ export function SponsorModal({ open, onClose }: SponsorModalProps) {
 
               {error && <p className="text-red-400 text-sm">{error}</p>}
 
-              <Button variant="gradient" className="w-full">
+              <Button variant="gradient" className="w-full" type="submit">
                 {loading ? "Wird gesendet..." : "Jetzt Kontakt aufnehmen"}
               </Button>
             </form>
