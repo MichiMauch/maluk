@@ -17,12 +17,12 @@ export function Hero() {
   const [videoOpen, setVideoOpen] = useState(false);
 
   return (
-    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden pt-16">
+    <section className="relative min-h-screen md:h-screen w-full flex items-center justify-center pt-16">
       {/* Dark Background */}
       <div className="absolute inset-0 bg-obsidian z-0" />
 
-      {/* Car Image - positioned right */}
-      <div className="absolute right-[20%] bottom-[20%] h-[50%] w-[50%] z-5 pointer-events-none">
+      {/* Car Image - Desktop: absolute positioned right */}
+      <div className="hidden md:block absolute right-[20%] bottom-[20%] h-[50%] w-[50%] z-5 pointer-events-none">
         <Image
           src="/images/hero-car.webp"
           alt="Racing car"
@@ -34,25 +34,25 @@ export function Hero() {
       </div>
 
       {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent z-10" />
+      <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent z-10" />
       <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent z-10" />
 
       {/* Decorative Lines */}
       <motion.div
-        className="absolute top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute top-[35%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.5 }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute bottom-[45%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.7 }}
       />
 
       {/* Content */}
-      <div className="relative z-20 w-full max-w-[1440px] px-6 lg:px-10 flex flex-col justify-center h-full">
+      <div className="relative z-20 w-full max-w-[1440px] px-8 md:px-6 lg:px-10 flex flex-col justify-start pt-4 md:justify-center md:pt-0 h-full">
         <div className="max-w-[800px] space-y-6">
           {/* Badge */}
           <motion.div
@@ -73,10 +73,22 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             PRÄZISION <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
+            <span className="inline-block pr-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
               AM LIMIT
             </span>
           </motion.h1>
+
+          {/* Car Image - Mobile: in flow between title and text */}
+          <div className="relative w-full h-[25vh] md:hidden">
+            <Image
+              src="/images/hero-car.webp"
+              alt="Racing car"
+              fill
+              priority
+              className="object-contain object-right"
+              sizes="100vw"
+            />
+          </div>
 
           {/* Tagline */}
           <motion.p
@@ -90,7 +102,7 @@ export function Hero() {
 
           {/* Buttons */}
           <motion.div
-            className="flex flex-wrap gap-4 pt-4"
+            className="flex flex-wrap gap-4 pt-4 pb-8 md:pb-0"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}

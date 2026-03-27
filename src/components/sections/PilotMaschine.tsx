@@ -39,7 +39,7 @@ export function PilotMaschine() {
   return (
     <div ref={containerRef} className="relative" style={isMobile ? undefined : { height: "150vh" }}>
       <div className={isMobile ? "" : "sticky top-0 h-screen"}>
-        <section id="pilot" className="w-full max-w-[1280px] mx-auto px-4 md:px-10 py-16">
+        <section id="pilot" className="w-full max-w-[1280px] mx-auto px-4 md:px-10 py-8">
           <SectionTitle highlight="Maschine">Pilot &amp; Maschine</SectionTitle>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">

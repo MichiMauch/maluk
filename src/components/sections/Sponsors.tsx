@@ -6,7 +6,7 @@ import { partners } from "@/data/partners";
 
 export function Sponsors() {
   return (
-    <section className="w-full border-t border-white/5 bg-[#14080a] py-16">
+    <section className="w-full border-t border-white/5 bg-[#14080a] py-8">
       <div className="max-w-[1280px] mx-auto px-4 md:px-10 text-center">
         <motion.p
           className="text-gray-500 text-xs uppercase tracking-[0.3em] mb-10"

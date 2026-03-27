@@ -6,7 +6,7 @@ import { raceEvents, getEventTypeLabel } from "@/data/calendar";
 
 export function RaceCalendar() {
   return (
-    <section id="calendar" className="w-full max-w-[1000px] px-4 md:px-10 py-16">
+    <section id="calendar" className="w-full max-w-[1000px] px-4 md:px-10 py-8">
       <SectionTitle centered highlight="2026">Rennkalender 2026</SectionTitle>
 
       <div className="relative">
@@ -92,7 +92,7 @@ export function RaceCalendar() {
 
               {/* Timeline Dot */}
               <div
-                className={`absolute left-4 md:left-1/2 md:-translate-x-1/2 z-10 order-1 md:order-2 ${
+                className={`absolute left-4 -translate-x-1/2 md:left-1/2 z-10 order-1 md:order-2 ${
                   isCancelled
                     ? "w-3 h-3 bg-gray-700 border border-gray-500 rounded-full"
                     : isBevorstehend

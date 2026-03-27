@@ -32,16 +32,19 @@ export function SectionTitle({ children, highlight, className = "", centered = f
 
   return (
     <motion.div
-      className={`sticky top-[60px] z-30 py-3 ${centered ? "mb-12" : "mb-8"} ${className}`}
+      className={`sticky top-[60px] z-30 ${centered ? "mb-12" : "mb-8"} ${className}`}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <h2 className={`text-white text-4xl md:text-5xl font-black italic uppercase tracking-tight ${centered ? "text-center" : ""}`}>
-        {renderChildren()}
-      </h2>
-      <div className="h-[1px] mt-3 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0" />
+      <div className="bg-background-dark py-3">
+        <h2 className={`text-white text-4xl md:text-5xl font-black italic uppercase tracking-tight ${centered ? "text-center" : ""}`}>
+          {renderChildren()}
+        </h2>
+        <div className="h-[1px] mt-3 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0" />
+      </div>
+      <div className="h-6 bg-gradient-to-b from-background-dark to-transparent pointer-events-none" />
     </motion.div>
   );
 }

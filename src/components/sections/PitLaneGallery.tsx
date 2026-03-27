@@ -171,7 +171,7 @@ export function PitLaneGallery() {
   );
 
   return (
-    <section className="w-full py-16 overflow-hidden">
+    <section className="w-full py-8 overflow-hidden">
       <div className="max-w-[1000px] mx-auto px-4 md:px-10">
         <SectionTitle centered highlight="Lane">
           Pit Lane

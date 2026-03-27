@@ -20,7 +20,7 @@ export function Header() {
   return (
     <>
       <motion.header
-        className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-[#492229]"
+        className="fixed top-0 left-0 right-0 z-50 bg-obsidian/95 backdrop-blur-sm border-b border-[#492229]"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -76,26 +76,35 @@ export function Header() {
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="md:hidden overflow-hidden border-t border-white/10"
+                className="md:hidden overflow-hidden border-t border-white/10 bg-obsidian"
               >
-                <nav className="flex flex-col px-4 py-4 gap-3">
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      className="text-gray-300 hover:text-primary text-sm font-medium py-2 transition-colors"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {link.label}
+                <nav className="px-4 py-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    {navLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        className="text-gray-300 hover:text-primary text-sm font-medium py-2 transition-colors"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+                    <a href="#club100" onClick={() => setMenuOpen(false)}>
+                      <Button size="sm" variant="outline" className="w-full">
+                        Member werden
+                      </Button>
                     </a>
-                  ))}
-                  <Button
-                    size="sm"
-                    className="mt-2 w-full"
-                    onClick={() => { setSponsorOpen(true); setMenuOpen(false); }}
-                  >
-                    Sponsor werden
-                  </Button>
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      onClick={() => { setSponsorOpen(true); setMenuOpen(false); }}
+                    >
+                      Sponsor werden
+                    </Button>
+                  </div>
                 </nav>
               </motion.div>
             )}

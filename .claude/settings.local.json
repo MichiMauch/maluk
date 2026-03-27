@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx next build:*)",
+      "Bash(magick:*)",
+      "Bash(turso db show:*)",
+      "Bash(python3:*)",
+      "Bash(git -C:*)",
+      "Bash(ssh:*)",
+      "Bash(git add:*)",
+      "Bash(npx tsc:*)",
+      "Bash(xargs file:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}

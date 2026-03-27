@@ -141,7 +141,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased bg-obsidian min-h-screen overflow-x-hidden noise-overlay`}
+        className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased bg-obsidian min-h-screen noise-overlay`}
       >
         {children}
       </body>

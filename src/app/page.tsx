@@ -15,11 +15,11 @@ export default function Home() {
     <>
       <Header />
 
-      <main className="relative flex min-h-screen w-full flex-col bg-obsidian overflow-x-clip font-[var(--font-display)]">
+      <main className="relative flex min-h-screen w-full flex-col bg-obsidian font-[var(--font-display)]">
         <Hero />
 
         {/* Content Sections with Carbon Pattern */}
-        <div className="carbon-pattern w-full flex flex-col items-center py-10">
+        <div className="carbon-pattern w-full flex flex-col items-center py-6 overflow-x-clip">
           <PilotMaschine />
           <RaceCalendar />
           <PitLaneGallery />
