@@ -76,6 +76,7 @@ export function PilotMaschine() {
                     href="https://www.instagram.com/malukracing/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="MALUK Racing auf Instagram"
                     className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -86,6 +87,7 @@ export function PilotMaschine() {
                     href="https://www.youtube.com/@malukracing"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="MALUK Racing auf YouTube"
                     className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

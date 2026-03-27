@@ -23,7 +23,7 @@ export function Hero() {
 
       {/* Car Image - positioned right */}
       <img
-        src="/images/hero-car.png"
+        src="/images/hero-car.webp"
         alt="Racing car"
         className="absolute right-[20%] bottom-[20%] h-[50%] w-auto object-contain z-5 pointer-events-none"
       />

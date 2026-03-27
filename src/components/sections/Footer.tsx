@@ -28,9 +28,9 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <div className="flex items-center gap-2 text-white mb-6">
-              <h2 className="text-2xl font-black italic">
+              <span className="text-2xl font-black italic">
                 MALUK<span className="text-primary">RACING</span>
-              </h2>
+              </span>
             </div>
             <p className="text-gray-400 text-sm max-w-sm mb-6">
               Bergrennen-Team aus der Schweiz. Leidenschaft f&uuml;r Pr&auml;zision,
