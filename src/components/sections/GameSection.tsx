@@ -14,7 +14,7 @@ interface LeaderboardEntry {
 }
 
 export function GameSection() {
-  const { showCTA, setShowCTA } = useGameStore();
+  const { showCTA, setShowCTA, addScore } = useGameStore();
   const [rankingOpen, setRankingOpen] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [lastResult, setLastResult] = useState<number | null>(null);
@@ -62,6 +62,7 @@ export function GameSection() {
     setLastResult(time);
     setSubmitted(false);
     setPlayerName("");
+    addScore(time);
   };
 
   const handleSubmit = async () => {

@@ -91,7 +91,7 @@ export default function RootLayout({
                   ],
                   contactPoint: {
                     "@type": "ContactPoint",
-                    email: "lukas.maurer@gmail.com",
+                    url: "https://malukracing.ch#contact",
                     contactType: "customer service",
                   },
                 },

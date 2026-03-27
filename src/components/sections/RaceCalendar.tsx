@@ -1,8 +1,74 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { SectionTitle } from "@/components/ui";
-import { raceEvents, getEventTypeLabel } from "@/data/calendar";
+import { raceEvents, getEventTypeLabel, type RaceEvent } from "@/data/calendar";
+
+function RaceCard({ race, align }: { race: RaceEvent; align: "left" | "right" }) {
+  const isCancelled = race.status === "cancelled";
+  const isRight = align === "right";
+
+  return (
+    <div className="relative">
+      <div className={`flex items-center gap-2 mb-1 ${isRight ? "" : "justify-end"}`}>
+        <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded ${
+          race.eventType === "hillclimb" ? "bg-accent/20 text-accent" :
+          race.eventType === "slalom" ? "bg-primary/20 text-primary" :
+          "bg-white/15 text-gray-300"
+        }`}>
+          {getEventTypeLabel(race.eventType)}
+        </span>
+      </div>
+      <h3 className={`text-2xl font-bold mb-1 transition-colors ${
+        isCancelled ? "text-gray-400" : "text-white group-hover:text-primary"
+      }`}>
+        {race.name}
+      </h3>
+      <p className={`text-sm mb-2 font-mono ${isCancelled ? "text-gray-500" : "text-gray-300"}`}>
+        {formatDateRange(race.dateStart, race.dateEnd)}
+      </p>
+      <p className={`text-sm ${isCancelled ? "text-gray-500" : "text-gray-400"}`}>
+        {race.description}
+      </p>
+      {race.result && (
+        <div className={`mt-2 flex items-center gap-2 ${isRight ? "" : "justify-end"}`}>
+          {race.result.isRecord && (
+            <span className="text-xs bg-accent text-white px-2 py-0.5 rounded">REKORD</span>
+          )}
+          <span className="text-primary font-mono font-bold">
+            P{race.result.position} - {race.result.time}
+          </span>
+        </div>
+      )}
+      {race.image?.url ? (
+        <div className="relative w-full h-24 mt-3 rounded-lg overflow-hidden border border-white/10">
+          <Image
+            src={race.image.url}
+            alt={race.image.alt}
+            fill
+            className="object-cover opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0"
+            sizes="(max-width: 768px) 100vw, 45vw"
+          />
+        </div>
+      ) : !isCancelled ? (
+        <div className="w-full h-16 mt-3 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs uppercase tracking-widest">
+          Bevorstehend
+        </div>
+      ) : null}
+      {isCancelled && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span
+            className="bg-red-600/80 text-white text-sm font-bold uppercase tracking-[0.2em] px-8 py-1.5 -rotate-12"
+            style={{ boxShadow: "0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.3)" }}
+          >
+            Abgesagt
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function RaceCalendar() {
   return (
@@ -23,71 +89,15 @@ export function RaceCalendar() {
           return (
             <motion.div
               key={race._id}
-              className={`relative flex flex-col md:flex-row items-center mb-16 md:justify-between group`}
+              className="relative flex flex-col md:flex-row items-center mb-16 md:justify-between group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
-              {/* Content Left (even index) */}
-              <div
-                className={`md:w-[45%] w-full order-2 md:order-1 pl-12 md:pl-0 md:pr-12 md:text-right`}
-              >
-                {isEven ? (
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-1 justify-end">
-                      <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded ${
-                        race.eventType === "hillclimb" ? "bg-accent/20 text-accent" :
-                        race.eventType === "slalom" ? "bg-primary/20 text-primary" :
-                        "bg-white/15 text-gray-300"
-                      }`}>
-                        {getEventTypeLabel(race.eventType)}
-                      </span>
-                    </div>
-                    <h3 className={`text-2xl font-bold mb-1 transition-colors ${
-                      isCancelled ? "text-gray-400" : "text-white group-hover:text-primary"
-                    }`}>
-                      {race.name}
-                    </h3>
-                    <p className={`text-sm mb-2 font-mono ${isCancelled ? "text-gray-500" : "text-gray-300"}`}>
-                      {formatDateRange(race.dateStart, race.dateEnd)}
-                    </p>
-                    <p className={`text-sm ${isCancelled ? "text-gray-500" : "text-gray-400"}`}>{race.description}</p>
-                    {race.result && (
-                      <div className="mt-2 flex items-center justify-end gap-2">
-                        {race.result.isRecord && (
-                          <span className="text-xs bg-accent text-white px-2 py-0.5 rounded">
-                            REKORD
-                          </span>
-                        )}
-                        <span className="text-primary font-mono font-bold">
-                          P{race.result.position} - {race.result.time}
-                        </span>
-                      </div>
-                    )}
-                    {race.image?.url ? (
-                      <motion.div
-                        className="w-full h-24 mt-3 rounded-lg bg-cover bg-center opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 border border-white/10"
-                        style={{ backgroundImage: `url("${race.image.url}")` }}
-                        whileHover={{ scale: 1.02 }}
-                      />
-                    ) : !isCancelled ? (
-                      <div className="w-full h-16 mt-3 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs uppercase tracking-widest">
-                        Bevorstehend
-                      </div>
-                    ) : null}
-                    {isCancelled && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none -translate-x-1/4">
-                        <span
-                          className="bg-red-600/80 text-white text-sm font-bold uppercase tracking-[0.2em] px-8 py-1.5 -rotate-12"
-                          style={{ boxShadow: "0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.3)" }}
-                        >
-                          Abgesagt
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ) : null}
+              {/* Content Left */}
+              <div className="md:w-[45%] w-full order-2 md:order-1 pl-12 md:pl-0 md:pr-12 md:text-right">
+                {isEven && <RaceCard race={race} align="left" />}
               </div>
 
               {/* Timeline Dot */}
@@ -107,53 +117,9 @@ export function RaceCalendar() {
                 )}
               </div>
 
-              {/* Content Right (odd index) */}
-              <div
-                className={`md:w-[45%] w-full order-3 md:order-3 pl-12 md:pl-12`}
-              >
-                {!isEven ? (
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded ${
-                        race.eventType === "hillclimb" ? "bg-accent/20 text-accent" :
-                        race.eventType === "slalom" ? "bg-primary/20 text-primary" :
-                        "bg-white/15 text-gray-300"
-                      }`}>
-                        {getEventTypeLabel(race.eventType)}
-                      </span>
-                    </div>
-                    <h3 className={`text-2xl font-bold mb-1 transition-colors ${
-                      isCancelled ? "text-gray-400" : "text-white group-hover:text-primary"
-                    }`}>
-                      {race.name}
-                    </h3>
-                    <p className={`text-sm mb-2 font-mono ${isCancelled ? "text-gray-500" : "text-gray-300"}`}>
-                      {formatDateRange(race.dateStart, race.dateEnd)}
-                    </p>
-                    <p className={`text-sm ${isCancelled ? "text-gray-500" : "text-gray-400"}`}>{race.description}</p>
-                    {race.image?.url ? (
-                      <motion.div
-                        className="w-full h-24 mt-3 rounded-lg bg-cover bg-center opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 border border-white/10"
-                        style={{ backgroundImage: `url("${race.image.url}")` }}
-                        whileHover={{ scale: 1.02 }}
-                      />
-                    ) : !isCancelled ? (
-                      <div className="w-full h-16 mt-3 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs uppercase tracking-widest">
-                        Bevorstehend
-                      </div>
-                    ) : null}
-                    {isCancelled && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none -translate-x-1/4">
-                        <span
-                          className="bg-red-600/80 text-white text-sm font-bold uppercase tracking-[0.2em] px-8 py-1.5 -rotate-12"
-                          style={{ boxShadow: "0 0 20px rgba(220, 38, 38, 0.6), 0 0 40px rgba(220, 38, 38, 0.3)" }}
-                        >
-                          Abgesagt
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ) : null}
+              {/* Content Right */}
+              <div className="md:w-[45%] w-full order-3 md:order-3 pl-12 md:pl-12">
+                {!isEven && <RaceCard race={race} align="right" />}
               </div>
             </motion.div>
           );
