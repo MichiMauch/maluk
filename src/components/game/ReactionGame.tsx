@@ -148,7 +148,7 @@ export function ReactionGame({ onResult }: ReactionGameProps) {
     <div className="space-y-6">
       {/* Startampel */}
       <motion.div
-        className="relative bg-gray-900 rounded-2xl p-8 cursor-pointer border border-white/10 overflow-hidden"
+        className="relative bg-gray-900 rounded-2xl p-4 sm:p-8 cursor-pointer border border-white/10 overflow-hidden"
         onClick={handleReaction}
         whileTap={{ scale: 0.98 }}
       >
@@ -161,17 +161,17 @@ export function ReactionGame({ onResult }: ReactionGameProps) {
         />
 
         {/* Ampel-Gehäuse */}
-        <div className="relative z-10 flex justify-center gap-3 mb-8">
+        <div className="relative z-10 flex justify-center gap-2 sm:gap-3 mb-8">
           {[0, 1, 2, 3, 4].map((index) => (
             <div
               key={index}
               className="relative"
             >
               {/* Licht-Gehäuse */}
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-black border-4 border-gray-700 flex items-center justify-center">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-black border-[3px] sm:border-4 border-gray-700 flex items-center justify-center">
                 {/* Licht */}
                 <motion.div
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${
+                  className={`w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full ${
                     activeLights > index
                       ? "bg-red-600"
                       : "bg-gray-800"
