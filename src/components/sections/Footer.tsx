@@ -127,10 +127,10 @@ export function Footer() {
             &copy; {new Date().getFullYear()} MALUK Racing. Alle Rechte vorbehalten.
           </p>
           <div className="flex gap-6 text-xs text-gray-600">
-            <a href="#" className="hover:text-gray-400">
+            <a href="/datenschutz" className="hover:text-gray-400">
               Datenschutz
             </a>
-            <a href="#" className="hover:text-gray-400">
+            <a href="/impressum" className="hover:text-gray-400">
               Impressum
             </a>
           </div>
