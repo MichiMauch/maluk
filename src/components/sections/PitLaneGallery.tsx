@@ -430,7 +430,7 @@ export function PitLaneGallery() {
                       alt={activeItem.alt}
                       width={1920}
                       height={1280}
-                      className="rounded-lg max-h-[75vh] sm:max-h-[82vh] w-auto max-w-full"
+                      className="rounded-lg max-h-[80vh] sm:max-h-[85vh] object-contain"
                       sizes="95vw"
                       priority
                     />
