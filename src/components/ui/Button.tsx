@@ -51,16 +51,15 @@ export function Button({
   const skewStyle = skewed ? { transform: "skewX(-10deg)" } : undefined;
   const skewInnerStyle = skewed ? { transform: "skewX(10deg)" } : undefined;
 
-  const content = (
+  const inner = (
     <>
       {icon && iconPosition === "left" && (
-        <span style={skewInnerStyle}><MaterialIcon name={icon} className="mr-2 text-sm" /></span>
+        <MaterialIcon name={icon} className="mr-2 text-sm" />
       )}
-      <span className={skewed ? "block" : ""} style={skewInnerStyle}>{children}</span>
+      {children}
       {icon && iconPosition === "right" && (
         <motion.span
-          className="ml-2"
-          style={skewInnerStyle}
+          className="ml-2 inline-flex"
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 400 }}
         >
@@ -69,6 +68,10 @@ export function Button({
       )}
     </>
   );
+
+  const content = skewed ? (
+    <span className="flex items-center justify-center" style={skewInnerStyle}>{inner}</span>
+  ) : inner;
 
   if (href) {
     return (
