@@ -45,7 +45,7 @@ export function Hero() {
         transition={{ duration: 1.5, delay: 0.5 }}
       />
       <motion.div
-        className="absolute bottom-[55%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute bottom-[52%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.7 }}
