@@ -133,10 +133,10 @@ export function LiveTicker() {
                     key={msg.id}
                     className={`flex gap-3 p-4 rounded-xl border ${
                       msg.type === "result"
-                        ? "bg-primary/10 border-primary/30"
+                        ? "bg-[#2a2000] border-primary/40"
                         : msg.type === "status"
-                          ? "bg-accent/10 border-accent/30"
-                          : "bg-white/[0.08] border-white/10"
+                          ? "bg-[#2a1010] border-accent/40"
+                          : "bg-[#1e1e1e] border-[#333]"
                     }`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
