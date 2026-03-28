@@ -57,16 +57,8 @@ function SponsorContent({ partner }: { partner: (typeof partners)[0] }) {
   if (partner.logo) {
     return (
       <div
-        className="relative h-12 w-36 md:h-14 md:w-44 transition-all duration-300 group-hover:drop-shadow-[0_0_20px_rgba(255,214,0,0.4)]"
-        style={{
-          filter: "brightness(0) invert(1) opacity(0.7)",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.filter = "brightness(0) invert(1) opacity(1)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.filter = "brightness(0) invert(1) opacity(0.7)";
-        }}
+        className="relative h-12 w-36 md:h-14 md:w-44 transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:drop-shadow-[0_0_20px_rgba(255,214,0,0.4)]"
+        style={{ filter: "brightness(0) invert(1)" }}
       >
         <Image
           src={partner.logo.url}

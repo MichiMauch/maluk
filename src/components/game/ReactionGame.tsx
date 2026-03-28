@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
@@ -109,7 +109,7 @@ export function ReactionGame({ onResult, onGameStart }: ReactionGameProps) {
     };
   }, [clearTimers]);
 
-  const getMessage = () => {
+  const message = useMemo(() => {
     switch (phase) {
       case "idle":
         return { title: "Startampel", subtitle: "Drücke SPACE zum Starten" };
@@ -142,9 +142,7 @@ export function ReactionGame({ onResult, onGameStart }: ReactionGameProps) {
       default:
         return { title: "", subtitle: "" };
     }
-  };
-
-  const message = getMessage();
+  }, [phase, reactionTime]);
 
   return (
     <div className="space-y-6">

@@ -5,3 +5,4 @@ export { GlassCard } from "./GlassCard";
 export { SectionTitle } from "./SectionTitle";
 export { Modal } from "./Modal";
 export { MessageIcon } from "./MessageIcon";
+export { PartnerScrollBar } from "./PartnerScrollBar";

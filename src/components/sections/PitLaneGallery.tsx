@@ -13,8 +13,48 @@ import {
 } from "@/data/gallery";
 import { trackEvent } from "@/lib/tracking";
 
-const SCROLL_SPEED = 40; // px per second
-const CLICK_THRESHOLD = 5; // px – max movement to count as a click
+const SCROLL_SPEED = 40;
+const CLICK_THRESHOLD = 5;
+
+function CategoryFilter({
+  activeCategory,
+  onChange,
+  className,
+}: {
+  activeCategory: GalleryCategory | null;
+  onChange: (cat: GalleryCategory | null) => void;
+  className?: string;
+}) {
+  return (
+    <div className={`flex justify-center gap-2 flex-wrap ${className ?? ""}`}>
+      <button
+        onClick={() => onChange(null)}
+        className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
+          activeCategory === null
+            ? "bg-primary text-black"
+            : "border border-white/10 text-gray-400 hover:text-white hover:border-white/30"
+        }`}
+      >
+        Alle
+      </button>
+      {(Object.entries(categoryLabels) as [GalleryCategory, string][]).map(
+        ([key, label]) => (
+          <button
+            key={key}
+            onClick={() => onChange(key)}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
+              activeCategory === key
+                ? "bg-primary text-black"
+                : "border border-white/10 text-gray-400 hover:text-white hover:border-white/30"
+            }`}
+          >
+            {label}
+          </button>
+        )
+      )}
+    </div>
+  );
+}
 
 export function PitLaneGallery() {
   const [isPaused, setIsPaused] = useState(false);
@@ -242,34 +282,13 @@ export function PitLaneGallery() {
     }
   };
 
-  const renderCategoryButtons = (className?: string) => (
-    <div className={`flex justify-center gap-2 flex-wrap ${className ?? ""}`}>
-      <button
-        onClick={() => handleCategoryChange(null)}
-        className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
-          activeCategory === null
-            ? "bg-primary text-black"
-            : "border border-white/10 text-gray-400 hover:text-white hover:border-white/30"
-        }`}
-      >
-        Alle
-      </button>
-      {(Object.entries(categoryLabels) as [GalleryCategory, string][]).map(
-        ([key, label]) => (
-          <button
-            key={key}
-            onClick={() => handleCategoryChange(key)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
-              activeCategory === key
-                ? "bg-primary text-black"
-                : "border border-white/10 text-gray-400 hover:text-white hover:border-white/30"
-            }`}
-          >
-            {label}
-          </button>
-        )
-      )}
-    </div>
+  // Extracted as inline to preserve access to handleCategoryChange and activeCategory
+  const categoryButtons = (className?: string) => (
+    <CategoryFilter
+      activeCategory={activeCategory}
+      onChange={handleCategoryChange}
+      className={className}
+    />
   );
 
   return (
@@ -279,7 +298,7 @@ export function PitLaneGallery() {
           Pit Lane
         </SectionTitle>
 
-        {renderCategoryButtons("relative z-40 -mt-4 mb-6")}
+        {categoryButtons("relative z-40 -mt-4 mb-6")}
       </div>
 
       <div
@@ -401,7 +420,7 @@ export function PitLaneGallery() {
                 }}
               >
                 {/* Category Filter — directly above image */}
-                {renderCategoryButtons("mb-3")}
+                {categoryButtons("mb-3")}
 
                 <motion.div
                   className={`relative ${activeItem.youtubeId ? "w-full max-w-5xl" : ""}`}
