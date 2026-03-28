@@ -25,18 +25,18 @@ function StatusBadge({ status }: { status: RaceStatus | null }) {
       <span className="relative flex h-3 w-3">
         <span
           className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-            status === "live" ? "bg-green-400" : "bg-yellow-400"
+            status === "live" ? "bg-red-500" : "bg-yellow-400"
           }`}
         />
         <span
           className={`relative inline-flex rounded-full h-3 w-3 ${
-            status === "live" ? "bg-green-500" : "bg-yellow-500"
+            status === "live" ? "bg-red-500" : "bg-yellow-500"
           }`}
         />
       </span>
       <span
         className={`text-xs font-bold uppercase tracking-widest ${
-          status === "live" ? "text-green-400" : "text-yellow-400"
+          status === "live" ? "text-red-400" : "text-yellow-400"
         }`}
       >
         {status === "live" ? "Live" : "Pause"}
@@ -48,13 +48,13 @@ function StatusBadge({ status }: { status: RaceStatus | null }) {
 function MessageIcon({ type }: { type: string }) {
   switch (type) {
     case "photo":
-      return <MaterialIcon name="photo_camera" className="text-primary text-sm" filled />;
+      return <MaterialIcon name="photo_camera" className="text-primary text-base" filled />;
     case "result":
-      return <MaterialIcon name="emoji_events" className="text-primary text-sm" filled />;
+      return <MaterialIcon name="emoji_events" className="text-primary text-base" filled />;
     case "status":
-      return <MaterialIcon name="flag" className="text-primary text-sm" filled />;
+      return <MaterialIcon name="flag" className="text-accent text-base" filled />;
     default:
-      return <MaterialIcon name="chat" className="text-gray-500 text-sm" />;
+      return <MaterialIcon name="chat" className="text-primary text-base" filled />;
   }
 }
 
@@ -99,20 +99,20 @@ export function LiveTicker() {
   return (
     <section className="w-full max-w-[1280px] px-4 md:px-10 py-8">
       <motion.div
-        className="relative rounded-2xl overflow-hidden border border-green-500/30 bg-black"
+        className="relative rounded-2xl overflow-hidden border border-primary/20 bg-gradient-to-br from-[#1a1400] to-black"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
       >
         {/* Glow */}
-        <div className="absolute top-0 left-0 w-32 h-32 bg-green-500/10 blur-[80px] rounded-full" />
+        <div className="absolute top-0 left-0 w-40 h-40 bg-primary/10 blur-[100px] rounded-full" />
 
         <div className="relative z-10 p-4 sm:p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/50 bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/50 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
                 <MaterialIcon name="cell_tower" className="text-sm" filled />
                 Live Ticker
               </div>
@@ -123,23 +123,21 @@ export function LiveTicker() {
           {/* Messages */}
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="w-8 h-8 border-2 border-green-500/20 border-t-green-500 rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2">
+            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
               <AnimatePresence initial={false}>
                 {messages.map((msg, index) => (
                   <motion.div
                     key={msg.id}
-                    className={`flex gap-3 p-3 rounded-lg border ${
+                    className={`flex gap-3 p-4 rounded-xl border ${
                       msg.type === "result"
-                        ? "bg-primary/15 border-primary/30"
+                        ? "bg-primary/10 border-primary/30"
                         : msg.type === "status"
-                          ? "bg-green-500/15 border-green-500/30"
-                          : index === 0
-                            ? "bg-white/15 border-white/15"
-                            : "bg-white/10 border-white/10 hover:bg-white/15"
-                    } transition-colors`}
+                          ? "bg-accent/10 border-accent/30"
+                          : "bg-white/[0.08] border-white/10"
+                    }`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.03 }}
@@ -147,7 +145,7 @@ export function LiveTicker() {
                     {/* Time + Icon */}
                     <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
                       <MessageIcon type={msg.type} />
-                      <span className="text-[10px] text-gray-500 font-mono">
+                      <span className="text-[10px] text-primary/60 font-mono font-bold">
                         {formatTime(msg.created_at)}
                       </span>
                     </div>
@@ -159,8 +157,8 @@ export function LiveTicker() {
                           msg.type === "result"
                             ? "text-primary font-bold"
                             : msg.type === "status"
-                              ? "text-green-400 font-bold"
-                              : "text-gray-200"
+                              ? "text-accent font-bold"
+                              : "text-white"
                         }`}
                       >
                         {msg.text}
