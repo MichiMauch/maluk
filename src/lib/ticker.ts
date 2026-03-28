@@ -111,6 +111,30 @@ export async function clearActiveRace() {
   await turso.execute("DELETE FROM active_race WHERE id = 1");
 }
 
+// --- Helpers ---
+
+function mapRow(row: Record<string, unknown>): TickerMessage {
+  const id = row.id as number;
+  const type = row.type as TickerMessageType;
+  const hasMedia = row.image_url !== null;
+
+  // For videos and photos, serve via /api/media endpoint instead of inline base64
+  let imageUrl: string | null = null;
+  if (hasMedia) {
+    imageUrl = `/api/media?id=${id}`;
+  }
+
+  return {
+    id,
+    text: row.text as string,
+    image_url: imageUrl,
+    type,
+    race_status: row.race_status as RaceStatus | null,
+    race_id: row.race_id as string | null,
+    created_at: row.created_at as string,
+  };
+}
+
 // --- Ticker messages ---
 
 export async function addTickerMessage(
@@ -132,15 +156,7 @@ export async function getTickerMessages(limit = 50): Promise<TickerMessage[]> {
     args: [limit],
   });
 
-  return result.rows.map((row) => ({
-    id: row.id as number,
-    text: row.text as string,
-    image_url: row.image_url as string | null,
-    type: row.type as TickerMessageType,
-    race_status: row.race_status as RaceStatus | null,
-    race_id: row.race_id as string | null,
-    created_at: row.created_at as string,
-  }));
+  return result.rows.map(mapRow);
 }
 
 export async function getActiveRaceMessages(limit = 50): Promise<TickerMessage[]> {
@@ -152,15 +168,7 @@ export async function getActiveRaceMessages(limit = 50): Promise<TickerMessage[]
     args: [activeRace, limit],
   });
 
-  return result.rows.map((row) => ({
-    id: row.id as number,
-    text: row.text as string,
-    image_url: row.image_url as string | null,
-    type: row.type as TickerMessageType,
-    race_status: row.race_status as RaceStatus | null,
-    race_id: row.race_id as string | null,
-    created_at: row.created_at as string,
-  }));
+  return result.rows.map(mapRow);
 }
 
 export async function getMessagesByRace(raceId: string): Promise<TickerMessage[]> {
@@ -169,15 +177,7 @@ export async function getMessagesByRace(raceId: string): Promise<TickerMessage[]
     args: [raceId],
   });
 
-  return result.rows.map((row) => ({
-    id: row.id as number,
-    text: row.text as string,
-    image_url: row.image_url as string | null,
-    type: row.type as TickerMessageType,
-    race_status: row.race_status as RaceStatus | null,
-    race_id: row.race_id as string | null,
-    created_at: row.created_at as string,
-  }));
+  return result.rows.map(mapRow);
 }
 
 export async function getCurrentStatus(): Promise<RaceStatus | null> {
