@@ -18,11 +18,11 @@ import {
   downloadTelegramFile,
 } from "@/lib/telegram";
 import { generateRaceSummary } from "@/lib/ai-summary";
-import { raceEvents2024, raceEvents2026 } from "@/data/calendar";
+import { raceEvents2024, raceEvents2026, testRace } from "@/data/calendar";
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 
-const allEvents = [...raceEvents2024, ...raceEvents2026];
+const allEvents = [...raceEvents2024, ...raceEvents2026, testRace];
 const validSlugs = allEvents.map((e) => e.slug.current);
 
 function findEventBySlug(slug: string) {
