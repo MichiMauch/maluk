@@ -54,7 +54,7 @@ export function Button({
   const content = (
     <>
       {icon && iconPosition === "left" && (
-        <MaterialIcon name={icon} className="mr-2 text-sm" style={skewInnerStyle} />
+        <span style={skewInnerStyle}><MaterialIcon name={icon} className="mr-2 text-sm" /></span>
       )}
       <span className={skewed ? "block" : ""} style={skewInnerStyle}>{children}</span>
       {icon && iconPosition === "right" && (

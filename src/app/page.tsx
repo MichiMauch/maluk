@@ -7,6 +7,7 @@ import {
   Club100Section,
   GameSection,
   LiveTicker,
+  MobileBottomBar,
   Sponsors,
   Footer,
 } from "@/components/sections";
@@ -84,6 +85,7 @@ export default function Home() {
       </main>
 
       <Footer />
+      <MobileBottomBar />
     </>
   );
 }
