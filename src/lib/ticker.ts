@@ -143,6 +143,26 @@ export async function getTickerMessages(limit = 50): Promise<TickerMessage[]> {
   }));
 }
 
+export async function getActiveRaceMessages(limit = 50): Promise<TickerMessage[]> {
+  const activeRace = await getActiveRace();
+  if (!activeRace) return [];
+
+  const result = await turso.execute({
+    sql: "SELECT id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at DESC LIMIT ?",
+    args: [activeRace, limit],
+  });
+
+  return result.rows.map((row) => ({
+    id: row.id as number,
+    text: row.text as string,
+    image_url: row.image_url as string | null,
+    type: row.type as TickerMessageType,
+    race_status: row.race_status as RaceStatus | null,
+    race_id: row.race_id as string | null,
+    created_at: row.created_at as string,
+  }));
+}
+
 export async function getMessagesByRace(raceId: string): Promise<TickerMessage[]> {
   const result = await turso.execute({
     sql: "SELECT id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at ASC",

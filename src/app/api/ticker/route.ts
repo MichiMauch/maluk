@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTickerMessages, getCurrentStatus, initTickerTables } from "@/lib/ticker";
+import { getActiveRaceMessages, getActiveRace, getCurrentStatus, initTickerTables } from "@/lib/ticker";
+import { raceEvents2024, raceEvents2026, testRace } from "@/data/calendar";
+
+const allEvents = [...raceEvents2024, ...raceEvents2026, testRace];
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,13 +11,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const limit = Math.min(Math.max(1, Number(searchParams.get("limit") ?? 30)), 100);
 
-    const [messages, status] = await Promise.all([
-      getTickerMessages(limit),
+    const [messages, status, activeRaceId] = await Promise.all([
+      getActiveRaceMessages(limit),
       getCurrentStatus(),
+      getActiveRace(),
     ]);
 
+    const activeRaceName = activeRaceId
+      ? allEvents.find((e) => e.slug.current === activeRaceId)?.name ?? activeRaceId
+      : null;
+
     return NextResponse.json(
-      { messages, status },
+      { messages, status, activeRaceId, activeRaceName },
       {
         headers: {
           "Cache-Control": "public, s-maxage=10, stale-while-revalidate=5",
