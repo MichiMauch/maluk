@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getActiveRaceMessages, getActiveRace, getCurrentStatus, initTickerTables } from "@/lib/ticker";
-import { raceEvents2024, raceEvents2026, testRace } from "@/data/calendar";
+import { raceEvents2024, raceEvents2026 } from "@/data/calendar";
 
-const allEvents = [...raceEvents2024, ...raceEvents2026, testRace];
+const allEvents = [...raceEvents2024, ...raceEvents2026];
 
 export async function GET(request: NextRequest) {
   try {

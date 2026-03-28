@@ -112,20 +112,6 @@ export const raceEvents2024: RaceEvent[] = [
   },
 ];
 
-// Test Race
-export const testRace: RaceEvent = {
-  _id: "race-test-001",
-  _type: "raceEvent",
-  slug: { current: "r-2026" },
-  name: "Testrennen",
-  location: "Testort, Schweiz",
-  dateStart: "2026-03-28",
-  description: "Testrennen für Ticker und Rennbericht.",
-  eventType: "hillclimb",
-  season: 2026,
-  status: "upcoming",
-};
-
 // 2026 Season
 export const raceEvents2026: RaceEvent[] = [
   {
@@ -262,6 +248,18 @@ export const raceEvents2026: RaceEvent[] = [
     dateStart: "2026-09-19",
     dateEnd: "2026-09-20",
     description: "Saisonfinale in der Freiburger Berglandschaft.",
+    eventType: "hillclimb",
+    season: 2026,
+    status: "upcoming",
+  },
+  {
+    _id: "race-test-001",
+    _type: "raceEvent",
+    slug: { current: "r-2026" },
+    name: "Testrennen",
+    location: "Testort, Schweiz",
+    dateStart: "2026-12-31",
+    description: "Testrennen für Ticker und Rennbericht.",
     eventType: "hillclimb",
     season: 2026,
     status: "upcoming",
