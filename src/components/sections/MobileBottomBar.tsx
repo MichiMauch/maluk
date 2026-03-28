@@ -22,7 +22,7 @@ export function MobileBottomBar() {
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          transition={{ type: "spring", stiffness: 150, damping: 25 }}
         >
           <div className="grid grid-cols-2">
             <button
