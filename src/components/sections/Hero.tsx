@@ -39,20 +39,20 @@ export function Hero() {
 
       {/* Decorative Lines */}
       <motion.div
-        className="absolute top-[31%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute top-[28%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.5 }}
       />
       <motion.div
-        className="absolute bottom-[52%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute bottom-[55%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.7 }}
       />
 
       {/* Content */}
-      <div className="relative z-20 w-full max-w-[1440px] px-8 md:px-6 lg:px-10 flex flex-col justify-start pt-4 md:justify-center md:pt-0 h-full">
+      <div className="relative z-20 w-full max-w-[1440px] px-8 md:px-6 lg:px-10 flex flex-col justify-start pt-0 md:justify-center md:pt-0 h-full">
         <div className="max-w-[800px] space-y-6">
           {/* Badge */}
           <motion.div
