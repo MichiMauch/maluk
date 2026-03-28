@@ -73,6 +73,12 @@ export async function POST(request: NextRequest) {
   const senderName =
     message.from.username ?? message.from.first_name ?? "Unbekannt";
 
+  // /id works for everyone — before auth check
+  if (message.text?.trim() === "/id") {
+    await sendTelegramMessage(chatId, `Deine Chat-ID: ${chatId}`);
+    return NextResponse.json({ ok: true });
+  }
+
   // Initialize tables on first use
   await initTickerTables();
 
