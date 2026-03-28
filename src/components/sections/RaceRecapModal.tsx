@@ -36,6 +36,8 @@ function MessageIcon({ type }: { type: string }) {
   switch (type) {
     case "photo":
       return <MaterialIcon name="photo_camera" className="text-primary text-sm" filled />;
+    case "video":
+      return <MaterialIcon name="videocam" className="text-primary text-sm" filled />;
     case "result":
       return <MaterialIcon name="emoji_events" className="text-primary text-sm" filled />;
     case "status":
@@ -102,6 +104,41 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
               </div>
             )}
 
+            {/* Media Gallery */}
+            {(() => {
+              const media = messages.filter((m) => m.image_url && (m.type === "photo" || m.type === "video"));
+              if (media.length === 0) return null;
+              return (
+                <div>
+                  <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-3">
+                    Impressionen
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {media.map((m) => (
+                      <div key={m.id} className="rounded-lg overflow-hidden">
+                        {m.type === "video" ? (
+                          <video
+                            src={m.image_url!}
+                            controls
+                            playsInline
+                            muted
+                            className="w-full h-auto rounded-lg aspect-video object-cover"
+                          />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={m.image_url!}
+                            alt={m.text}
+                            className="w-full h-auto rounded-lg aspect-video object-cover"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Timeline */}
             {messages.length > 0 && (
               <div>
@@ -153,7 +190,17 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                               >
                                 {msg.text}
                               </p>
-                              {msg.image_url && (
+                              {msg.image_url && msg.type === "video" ? (
+                                <div className="mt-2 rounded-lg overflow-hidden max-w-xs">
+                                  <video
+                                    src={msg.image_url}
+                                    controls
+                                    playsInline
+                                    muted
+                                    className="w-full h-auto rounded-lg"
+                                  />
+                                </div>
+                              ) : msg.image_url ? (
                                 <div className="mt-2 rounded-lg overflow-hidden max-w-xs">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img
@@ -162,7 +209,7 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                                     className="w-full h-auto rounded-lg"
                                   />
                                 </div>
-                              )}
+                              ) : null}
                             </div>
                           </motion.div>
                         </div>

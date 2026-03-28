@@ -49,6 +49,8 @@ function MessageIcon({ type }: { type: string }) {
   switch (type) {
     case "photo":
       return <MaterialIcon name="photo_camera" className="text-primary text-base" filled />;
+    case "video":
+      return <MaterialIcon name="videocam" className="text-primary text-base" filled />;
     case "result":
       return <MaterialIcon name="emoji_events" className="text-primary text-base" filled />;
     case "status":
@@ -164,8 +166,18 @@ export function LiveTicker() {
                         {msg.text}
                       </p>
 
-                      {/* Photo */}
-                      {msg.image_url && (
+                      {/* Media */}
+                      {msg.image_url && msg.type === "video" ? (
+                        <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
+                          <video
+                            src={msg.image_url}
+                            controls
+                            playsInline
+                            muted
+                            className="w-full h-auto rounded-lg"
+                          />
+                        </div>
+                      ) : msg.image_url ? (
                         <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -174,7 +186,7 @@ export function LiveTicker() {
                             className="w-full h-auto rounded-lg"
                           />
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   </motion.div>
                 ))}

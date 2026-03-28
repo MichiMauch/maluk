@@ -36,6 +36,8 @@ interface TelegramUpdate {
     chat: { id: number };
     text?: string;
     photo?: Array<{ file_id: string; width: number; height: number }>;
+    video?: { file_id: string; file_size?: number; mime_type?: string };
+    video_note?: { file_id: string; file_size?: number };
     caption?: string;
   };
 }
@@ -300,6 +302,31 @@ export async function POST(request: NextRequest) {
 
     await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined);
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Bild gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Bild im Ticker gepostet");
+    return NextResponse.json({ ok: true });
+  }
+
+  // Video message
+  const video = message.video ?? message.video_note;
+  if (video) {
+    const MAX_VIDEO_SIZE = 8 * 1024 * 1024; // 8MB
+    if (video.file_size && video.file_size > MAX_VIDEO_SIZE) {
+      await sendTelegramMessage(chatId, `⚠️ Video zu gross (${Math.round(video.file_size / 1024 / 1024)}MB). Maximum: 8MB.`);
+      return NextResponse.json({ ok: true });
+    }
+
+    const fileUrl = await getTelegramFileUrl(video.file_id);
+    if (!fileUrl) {
+      await sendTelegramMessage(chatId, "❌ Video konnte nicht heruntergeladen werden.");
+      return NextResponse.json({ ok: true });
+    }
+
+    const buffer = await downloadTelegramFile(fileUrl);
+    const mimeType = ("mime_type" in video && video.mime_type) ? video.mime_type : "video/mp4";
+    const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
+    const caption = message.caption || "🎬 Video aus dem Fahrerlager";
+
+    await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined);
+    await sendTelegramMessage(chatId, activeRaceId ? `✅ Video gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Video im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
 

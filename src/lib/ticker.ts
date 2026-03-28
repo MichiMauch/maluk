@@ -1,6 +1,6 @@
 import { turso } from "./turso";
 
-export type TickerMessageType = "text" | "photo" | "result" | "status";
+export type TickerMessageType = "text" | "photo" | "video" | "result" | "status";
 export type RaceStatus = "live" | "pause" | "ende";
 
 export interface TickerMessage {
