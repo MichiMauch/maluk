@@ -99,7 +99,7 @@ export function LiveTicker() {
   return (
     <section className="w-full max-w-[1280px] px-4 md:px-10 py-8">
       <motion.div
-        className="relative rounded-2xl overflow-hidden border border-green-500/20 bg-gradient-to-br from-[#0a1a0f] to-[#0f0506]"
+        className="relative rounded-2xl overflow-hidden border border-green-500/20 bg-[#111]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -131,14 +131,14 @@ export function LiveTicker() {
                 {messages.map((msg, index) => (
                   <motion.div
                     key={msg.id}
-                    className={`flex gap-3 p-3 rounded-lg ${
+                    className={`flex gap-3 p-3 rounded-lg border ${
                       msg.type === "result"
-                        ? "bg-primary/5 border border-primary/10"
+                        ? "bg-primary/10 border-primary/20"
                         : msg.type === "status"
-                          ? "bg-green-500/5 border border-green-500/10"
+                          ? "bg-green-500/10 border-green-500/20"
                           : index === 0
-                            ? "bg-white/5"
-                            : "hover:bg-white/5"
+                            ? "bg-white/10 border-white/10"
+                            : "bg-white/[0.07] border-white/5 hover:bg-white/10"
                     } transition-colors`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -147,7 +147,7 @@ export function LiveTicker() {
                     {/* Time + Icon */}
                     <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
                       <MessageIcon type={msg.type} />
-                      <span className="text-[10px] text-gray-600 font-mono">
+                      <span className="text-[10px] text-gray-500 font-mono">
                         {formatTime(msg.created_at)}
                       </span>
                     </div>
@@ -160,7 +160,7 @@ export function LiveTicker() {
                             ? "text-primary font-bold"
                             : msg.type === "status"
                               ? "text-green-400 font-bold"
-                              : "text-gray-300"
+                              : "text-gray-200"
                         }`}
                       >
                         {msg.text}
