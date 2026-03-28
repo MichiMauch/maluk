@@ -136,7 +136,7 @@ export function LiveTicker() {
                         ? "bg-[#3a2d00] border-primary/40"
                         : msg.type === "status"
                           ? "bg-[#2a1010] border-accent/40"
-                          : "bg-[#1a1508] border-primary/15"
+                          : "bg-[#403520] border-primary/25"
                     }`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
