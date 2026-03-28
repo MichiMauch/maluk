@@ -102,7 +102,7 @@ export function Hero() {
 
           {/* Mobile Sponsor Logo Bar */}
           <motion.div
-            className="md:hidden relative overflow-hidden mt-2"
+            className="md:hidden relative overflow-hidden mt-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
