@@ -6,6 +6,7 @@ import { Button, MaterialIcon } from "@/components/ui";
 import { Modal } from "@/components/ui/Modal";
 import { ReactionGame } from "@/components/game/ReactionGame";
 import { useGameStore } from "@/store/gameStore";
+import { trackEvent } from "@/lib/tracking";
 
 interface LeaderboardEntry {
   rank: number;
@@ -22,6 +23,7 @@ export function GameSection() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [gameToken, setGameToken] = useState<string | null>(null);
 
   async function handleShare() {
     if (!lastResult) return;
@@ -58,7 +60,21 @@ export function GameSection() {
     fetchLeaderboard();
   }, [fetchLeaderboard]);
 
+  const handleGameStart = async () => {
+    trackEvent("Game", "Start");
+    try {
+      const res = await fetch("/api/game-token", { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setGameToken(data.token);
+      }
+    } catch {
+      // Token fetch failed — user can still play, just can't submit
+    }
+  };
+
   const handleResult = (time: number) => {
+    trackEvent("Game", "Result", undefined, time);
     setLastResult(time);
     setSubmitted(false);
     setPlayerName("");
@@ -73,11 +89,13 @@ export function GameSection() {
       const res = await fetch("/api/leaderboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: playerName.trim(), time: lastResult }),
+        body: JSON.stringify({ name: playerName.trim(), time: lastResult, gameToken }),
       });
       if (res.ok) {
+        trackEvent("Game", "Leaderboard-Submit", playerName.trim(), lastResult);
         setSubmitted(true);
         setLastResult(null);
+        setGameToken(null);
         await fetchLeaderboard();
       }
     } catch {
@@ -160,20 +178,23 @@ export function GameSection() {
                     className="text-6xl text-primary mb-4"
                   />
                   <h3 className="text-2xl font-bold text-white mb-2">
-                    Great Reflexes!
+                    Starke Reflexe!
                   </h3>
                   <p className="text-gray-300 mb-6 max-w-xs">
-                    You&apos;ve got the reactions of a hillclimb driver. Ready
-                    to support the real thing?
+                    Du hast die Reaktionen eines Bergrennen-Piloten.
+                    Bereit, das echte Team zu unterstützen?
                   </p>
-                  <Button variant="gradient" className="mb-4" href="#contact">
+                  <Button variant="gradient" className="mb-4" onClick={() => {
+                    setShowCTA(false);
+                    document.dispatchEvent(new CustomEvent("open-club100-modal"));
+                  }}>
                     Member werden
                   </Button>
                   <button
                     className="text-gray-400 text-sm hover:text-white transition-colors"
                     onClick={() => setShowCTA(false)}
                   >
-                    Play again
+                    Nochmal spielen
                   </button>
                 </motion.div>
               ) : (
@@ -184,7 +205,7 @@ export function GameSection() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <ReactionGame onResult={handleResult} />
+                  <ReactionGame onResult={handleResult} onGameStart={handleGameStart} />
 
                   {/* Name Entry */}
                   <AnimatePresence>

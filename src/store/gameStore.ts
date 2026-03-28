@@ -40,8 +40,8 @@ export const useGameStore = create<GameState>()(
           updatedScores.length > 0 ? updatedScores[0].time : null;
         const newGamesPlayed = get().gamesPlayed + 1;
 
-        // Show CTA after first game
-        const shouldShowCTA = newGamesPlayed >= 1;
+        // Show CTA after every 5th game
+        const shouldShowCTA = newGamesPlayed > 0 && newGamesPlayed % 5 === 0;
 
         set({
           highScores: updatedScores,

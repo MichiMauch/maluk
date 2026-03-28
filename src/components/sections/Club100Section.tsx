@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button, MaterialIcon, Modal } from "@/components/ui";
 import { club100Stats } from "@/data/partners";
+import { trackEvent } from "@/lib/tracking";
 import Image from "next/image";
 
 export function Club100Section() {
@@ -12,6 +13,12 @@ export function Club100Section() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    document.addEventListener("open-club100-modal", handler);
+    return () => document.removeEventListener("open-club100-modal", handler);
+  }, []);
 
   function handleClose() {
     setOpen(false);
@@ -40,6 +47,7 @@ export function Club100Section() {
         throw new Error(data.error || "Fehler beim Senden");
       }
 
+      trackEvent("Club100", "Signup");
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Fehler beim Senden");
@@ -155,9 +163,9 @@ export function Club100Section() {
       <Modal open={open} onClose={handleClose}>
         {!submitted ? (
           <div className="space-y-6">
-            <h3 className="text-2xl font-black italic text-white">
+            <h3 className="text-2xl font-black italic text-white pt-1">
               CLUB{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent pr-1">
                 100
               </span>
             </h3>
@@ -167,6 +175,11 @@ export function Club100Section() {
               100.00 pro Saison und erhalte exklusiven Zugang zum Fahrerlager,
               Getränke, exklusive News und eine persönliche Führung durchs
               Fahrerlager.
+            </p>
+
+            <p className="text-gray-400 text-sm">
+              Hinterlasse deine E-Mail-Adresse und Lukas meldet sich
+              persönlich bei dir mit allen Details.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">

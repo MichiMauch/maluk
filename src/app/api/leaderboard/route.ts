@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { turso } from "@/lib/turso";
+import { validateGameToken } from "@/lib/game-token";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, time } = body as { name?: unknown; time?: unknown };
+  const { name, time, gameToken } = body as { name?: unknown; time?: unknown; gameToken?: unknown };
 
   if (typeof name !== "string") {
     return NextResponse.json({ error: "Name muss ein Text sein" }, { status: 400 });
@@ -45,6 +46,16 @@ export async function POST(request: NextRequest) {
 
   if (typeof time !== "number" || !Number.isInteger(time) || time < 50 || time > 2000) {
     return NextResponse.json({ error: "Zeit muss zwischen 50 und 2000ms liegen" }, { status: 400 });
+  }
+
+  // Validate game token for anti-cheat
+  if (typeof gameToken !== "string") {
+    return NextResponse.json({ error: "Spieltoken fehlt" }, { status: 400 });
+  }
+
+  const tokenResult = validateGameToken(gameToken, time);
+  if (!tokenResult.valid) {
+    return NextResponse.json({ error: tokenResult.error }, { status: 403 });
   }
 
   try {

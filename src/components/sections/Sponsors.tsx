@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { partners } from "@/data/partners";
+import { trackEvent } from "@/lib/tracking";
 
 export function Sponsors() {
   return (
@@ -35,6 +36,7 @@ export function Sponsors() {
                   rel="noopener noreferrer"
                   className="block cursor-pointer"
                   title={partner.name}
+                  onClick={() => trackEvent("Sponsor", "Click", partner.name)}
                 >
                   <SponsorContent partner={partner} />
                 </a>

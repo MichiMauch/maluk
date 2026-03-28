@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button, MaterialIcon } from "@/components/ui";
 import Image from "next/image";
+import { trackEvent } from "@/lib/tracking";
 
 interface SponsorModalProps {
   open: boolean;
@@ -50,6 +51,7 @@ export function SponsorModal({ open, onClose }: SponsorModalProps) {
         throw new Error(data.error || "Fehler beim Senden");
       }
 
+      trackEvent("Sponsor", "Inquiry", company || name);
       setSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Fehler beim Senden");

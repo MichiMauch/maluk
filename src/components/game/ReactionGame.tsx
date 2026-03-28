@@ -8,9 +8,10 @@ type GamePhase = "idle" | "countdown" | "waiting" | "go" | "result" | "early";
 
 interface ReactionGameProps {
   onResult?: (time: number) => void;
+  onGameStart?: () => void;
 }
 
-export function ReactionGame({ onResult }: ReactionGameProps) {
+export function ReactionGame({ onResult, onGameStart }: ReactionGameProps) {
   const [phase, setPhase] = useState<GamePhase>("idle");
   const [activeLights, setActiveLights] = useState(0);
   const [reactionTime, setReactionTime] = useState<number | null>(null);
@@ -34,6 +35,7 @@ export function ReactionGame({ onResult }: ReactionGameProps) {
     setReactionTime(null);
     setActiveLights(0);
     setPhase("countdown");
+    onGameStart?.();
 
     let lightCount = 0;
 
@@ -60,7 +62,7 @@ export function ReactionGame({ onResult }: ReactionGameProps) {
         }, delay);
       }
     }, 1200);
-  }, [clearTimers]);
+  }, [clearTimers, onGameStart]);
 
   const handleReaction = useCallback(() => {
     if (phase === "idle" || phase === "result" || phase === "early") {
