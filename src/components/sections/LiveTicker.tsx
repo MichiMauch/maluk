@@ -99,7 +99,7 @@ export function LiveTicker() {
   return (
     <section className="w-full max-w-[1280px] px-4 md:px-10 py-8">
       <motion.div
-        className="relative rounded-2xl overflow-hidden border border-primary/20 bg-gradient-to-br from-[#1a1400] to-black"
+        className="relative rounded-2xl overflow-hidden border-2 border-primary/40 bg-[#1a1a1a]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -136,7 +136,7 @@ export function LiveTicker() {
                         ? "bg-[#2a2000] border-primary/40"
                         : msg.type === "status"
                           ? "bg-[#2a1010] border-accent/40"
-                          : "bg-[#1e1e1e] border-[#333]"
+                          : "bg-[#282828] border-[#3a3a3a]"
                     }`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
