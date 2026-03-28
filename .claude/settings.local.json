@@ -11,7 +11,16 @@
       "Bash(git add:*)",
       "Bash(npx tsc:*)",
       "Bash(xargs file:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(gh search:*)",
+      "WebFetch(domain:www.youtube.com)",
+      "Read(//Users/michaelmauch/.claude/skills/**)",
+      "Read(//Users/michaelmauch/.claude/**)",
+      "Read(//Users/michaelmauch/.agents/skills/**)",
+      "Read(//Users/michaelmauch/**)",
+      "Bash(ln -s /Users/michaelmauch/.agents/skills/find-skills /Users/michaelmauch/.claude/skills/find-skills)",
+      "Bash(npx skills:*)",
+      "Bash(grep -r \"blurDataURL\\\\|placeholder\\\\s*=\" /Users/michaelmauch/Documents/Development/maluk/src --include=*.tsx --include=*.ts)"
     ]
   }
 }

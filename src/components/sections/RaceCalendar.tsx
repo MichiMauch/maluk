@@ -1,11 +1,23 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { SectionTitle } from "@/components/ui";
 import { raceEvents, getEventTypeLabel, type RaceEvent } from "@/data/calendar";
+import { RaceRecapModal } from "./RaceRecapModal";
 
-function RaceCard({ race, align }: { race: RaceEvent; align: "left" | "right" }) {
+function RaceCard({
+  race,
+  align,
+  onRecapClick,
+  hasRecap,
+}: {
+  race: RaceEvent;
+  align: "left" | "right";
+  onRecapClick: () => void;
+  hasRecap: boolean;
+}) {
   const isCancelled = race.status === "cancelled";
   const isRight = align === "right";
 
@@ -52,9 +64,21 @@ function RaceCard({ race, align }: { race: RaceEvent; align: "left" | "right" })
           />
         </div>
       ) : !isCancelled ? (
-        <div className="w-full h-16 mt-3 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs uppercase tracking-widest">
-          Bevorstehend
-        </div>
+        hasRecap ? (
+          <button
+            onClick={onRecapClick}
+            className="w-full h-16 mt-3 border border-primary/30 bg-primary/5 rounded-lg flex items-center justify-center gap-2 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/10 transition-colors cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+              article
+            </span>
+            Rennbericht
+          </button>
+        ) : (
+          <div className="w-full h-16 mt-3 border border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs uppercase tracking-widest">
+            Bevorstehend
+          </div>
+        )
       ) : null}
       {isCancelled && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -71,6 +95,35 @@ function RaceCard({ race, align }: { race: RaceEvent; align: "left" | "right" })
 }
 
 export function RaceCalendar() {
+  const [recapModal, setRecapModal] = useState<{ slug: string; name: string } | null>(null);
+  const [recapSlugs, setRecapSlugs] = useState<Set<string>>(new Set());
+
+  const checkRecaps = useCallback(async () => {
+    // Check which races have recaps
+    const slugsToCheck = raceEvents
+      .filter((e) => e.status !== "cancelled")
+      .map((e) => e.slug.current);
+
+    const results = await Promise.all(
+      slugsToCheck.map(async (slug) => {
+        try {
+          const res = await fetch(`/api/race-recap?race=${slug}`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          return data.hasRecap ? slug : null;
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    setRecapSlugs(new Set(results.filter(Boolean) as string[]));
+  }, []);
+
+  useEffect(() => {
+    checkRecaps();
+  }, [checkRecaps]);
+
   return (
     <section id="calendar" className="w-full max-w-[1000px] px-4 md:px-10 py-8">
       <SectionTitle centered highlight="2026">Rennkalender 2026</SectionTitle>
@@ -80,11 +133,11 @@ export function RaceCalendar() {
         <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary to-transparent md:-translate-x-1/2" />
 
         {raceEvents.map((race, index) => {
-          const isCompleted = race.status === "completed";
           const isLive = race.status === "live";
           const isCancelled = race.status === "cancelled";
           const isBevorstehend = race.status === "upcoming";
           const isEven = index % 2 === 0;
+          const hasRecap = recapSlugs.has(race.slug.current);
 
           return (
             <motion.div
@@ -97,7 +150,14 @@ export function RaceCalendar() {
             >
               {/* Content Left */}
               <div className="md:w-[45%] w-full order-2 md:order-1 pl-12 md:pl-0 md:pr-12 md:text-right">
-                {isEven && <RaceCard race={race} align="left" />}
+                {isEven && (
+                  <RaceCard
+                    race={race}
+                    align="left"
+                    hasRecap={hasRecap}
+                    onRecapClick={() => setRecapModal({ slug: race.slug.current, name: race.name })}
+                  />
+                )}
               </div>
 
               {/* Timeline Dot */}
@@ -119,12 +179,29 @@ export function RaceCalendar() {
 
               {/* Content Right */}
               <div className="md:w-[45%] w-full order-3 md:order-3 pl-12 md:pl-12">
-                {!isEven && <RaceCard race={race} align="right" />}
+                {!isEven && (
+                  <RaceCard
+                    race={race}
+                    align="right"
+                    hasRecap={hasRecap}
+                    onRecapClick={() => setRecapModal({ slug: race.slug.current, name: race.name })}
+                  />
+                )}
               </div>
             </motion.div>
           );
         })}
       </div>
+
+      {/* Recap Modal */}
+      {recapModal && (
+        <RaceRecapModal
+          open={true}
+          onClose={() => setRecapModal(null)}
+          raceSlug={recapModal.slug}
+          raceName={recapModal.name}
+        />
+      )}
     </section>
   );
 }
