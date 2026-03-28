@@ -45,7 +45,7 @@ export function PilotMaschine() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {/* Left — Pilot */}
             <motion.div className="h-full" style={{ x: isMobile ? 0 : leftX, y: isMobile ? mobileY : 0, opacity }}>
-              <GlassCard animated={false} className="h-full p-6 md:p-8 flex flex-col items-center text-center" delay={0}>
+              <GlassCard animated={false} className="h-full p-6 md:p-8 flex flex-col items-center text-center !border-2 !border-primary/40 neon-glow" delay={0}>
                 {/* Portrait */}
                 <motion.div
                   className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-primary/40 neon-glow mb-6"
@@ -109,7 +109,7 @@ export function PilotMaschine() {
 
             {/* Right — Car */}
             <motion.div className="h-full" style={{ x: isMobile ? 0 : rightX, y: isMobile ? mobileY : 0, opacity }}>
-              <GlassCard animated={false} className="h-full p-6 md:p-8 overflow-hidden" delay={0.15}>
+              <GlassCard animated={false} className="h-full p-6 md:p-8 overflow-hidden !border-2 !border-primary/40 neon-glow" delay={0.15}>
                 {/* Car Image */}
                 <motion.div
                   className="relative w-full h-48 md:h-56 rounded-lg overflow-hidden border-2 border-primary/40 neon-glow mb-6"
