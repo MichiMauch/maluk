@@ -6,4 +6,5 @@ export { Club100Section } from "./Club100Section";
 export { GameSection } from "./GameSection";
 export { Sponsors } from "./Sponsors";
 export { PitLaneGallery } from "./PitLaneGallery";
+export { LiveTicker } from "./LiveTicker";
 export { Footer } from "./Footer";

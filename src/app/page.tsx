@@ -6,6 +6,7 @@ import {
   PilotMaschine,
   Club100Section,
   GameSection,
+  LiveTicker,
   Sponsors,
   Footer,
 } from "@/components/sections";
@@ -74,6 +75,7 @@ export default function Home() {
         <div className="carbon-pattern w-full flex flex-col items-center py-6 overflow-x-clip">
           <PilotMaschine />
           <RaceCalendar />
+          <LiveTicker />
           <PitLaneGallery />
           <Club100Section />
           <GameSection />
