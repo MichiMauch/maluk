@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo, Button, MaterialIcon } from "@/components/ui";
 import { SponsorModal } from "./SponsorModal";
@@ -16,6 +16,12 @@ const navLinks = [
 export function Header() {
   const [sponsorOpen, setSponsorOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setSponsorOpen(true);
+    document.addEventListener("open-sponsor-modal", handler);
+    return () => document.removeEventListener("open-sponsor-modal", handler);
+  }, []);
 
   return (
     <>

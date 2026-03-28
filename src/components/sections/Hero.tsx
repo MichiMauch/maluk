@@ -100,6 +100,37 @@ export function Hero() {
             Tauche ein in die Welt des Rennsports mit Lukas Maurer und seinem legendären Opel Kadett C GT/E. Entdecke die Leidenschaft, die hinter jedem Rennen steckt.
           </motion.p>
 
+          {/* Mobile Sponsor Logo Bar */}
+          <motion.div
+            className="md:hidden relative overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-obsidian to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-obsidian to-transparent z-10 pointer-events-none" />
+            <div className="flex gap-8 animate-[hero-scroll_20s_linear_infinite] w-max">
+              {[...partners, ...partners].map((partner, i) => {
+                if (!partner.logo) return null;
+                return (
+                  <div
+                    key={`${partner._id}-mob-${i}`}
+                    className="relative h-6 w-16 flex-shrink-0"
+                    style={{ filter: "brightness(0) invert(1) opacity(0.5)" }}
+                  >
+                    <Image
+                      src={partner.logo.url}
+                      alt={partner.logo.alt}
+                      fill
+                      className="object-contain"
+                      sizes="64px"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
           {/* Buttons */}
           <motion.div
             className="flex flex-wrap gap-4 pt-4 pb-8 md:pb-0"
@@ -112,6 +143,14 @@ export function Hero() {
                 Aktuelle Saison
               </Button>
             </a>
+            <Button
+              variant="outline"
+              skewed
+              className="md:hidden"
+              onClick={() => document.dispatchEvent(new CustomEvent("open-sponsor-modal"))}
+            >
+              Partner werden
+            </Button>
             <Button variant="secondary" skewed onClick={() => setVideoOpen(true)}>
               Onboard ansehen
             </Button>
