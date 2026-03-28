@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
   if (!authorized) {
     await sendTelegramMessage(
       chatId,
-      "⛔ Du bist nicht berechtigt. Bitte Lukas, dich mit /invite freizuschalten."
+      `⛔ Du bist nicht berechtigt.\nDeine Chat-ID: ${chatId}\nSchick diese ID an den Admin, damit er dich mit /invite freischalten kann.`
     );
     return NextResponse.json({ ok: true });
   }
