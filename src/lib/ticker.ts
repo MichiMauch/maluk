@@ -19,50 +19,55 @@ export interface RaceSummary {
   created_at: string;
 }
 
-// Initialize tables (safe to call multiple times)
+// Initialize tables (safe to call multiple times, cached after first run)
+let tablesInitialized = false;
+
 export async function initTickerTables() {
-  await turso.execute(`
-    CREATE TABLE IF NOT EXISTS ticker_messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      text TEXT NOT NULL,
-      image_url TEXT,
-      type TEXT NOT NULL DEFAULT 'text',
-      race_status TEXT,
-      race_id TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  if (tablesInitialized) return;
 
-  await turso.execute(`
-    CREATE TABLE IF NOT EXISTS ticker_admins (
-      chat_id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      added_by TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  await Promise.all([
+    turso.execute(`
+      CREATE TABLE IF NOT EXISTS ticker_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT NOT NULL,
+        image_url TEXT,
+        type TEXT NOT NULL DEFAULT 'text',
+        race_status TEXT,
+        race_id TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+    turso.execute(`
+      CREATE TABLE IF NOT EXISTS ticker_admins (
+        chat_id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        added_by TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+    turso.execute(`
+      CREATE TABLE IF NOT EXISTS race_summaries (
+        race_id TEXT PRIMARY KEY,
+        summary TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+    turso.execute(`
+      CREATE TABLE IF NOT EXISTS active_race (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        race_id TEXT NOT NULL
+      )
+    `),
+  ]);
 
-  await turso.execute(`
-    CREATE TABLE IF NOT EXISTS race_summaries (
-      race_id TEXT PRIMARY KEY,
-      summary TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  await turso.execute(`
-    CREATE TABLE IF NOT EXISTS active_race (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      race_id TEXT NOT NULL
-    )
-  `);
-
-  // Add race_id column if it doesn't exist (migration for existing DBs)
+  // Migration for existing DBs
   try {
     await turso.execute("ALTER TABLE ticker_messages ADD COLUMN race_id TEXT");
   } catch {
     // Column already exists
   }
+
+  tablesInitialized = true;
 }
 
 // --- Admin functions ---

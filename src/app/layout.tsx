@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Noto_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -71,8 +72,16 @@ export default function RootLayout({
     <html lang="de" className="dark">
       <head>
         <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          as="style"
+        />
+        <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
+          media="print"
+          // @ts-expect-error onLoad is valid on link elements
+          onLoad="this.media='all'"
         />
         <script
           type="application/ld+json"
@@ -123,7 +132,14 @@ export default function RootLayout({
             }),
           }}
         />
-        <script
+      </head>
+      <body
+        className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased bg-obsidian min-h-screen noise-overlay`}
+      >
+        {children}
+        <Script
+          id="matomo"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               var _paq = window._paq = window._paq || [];
@@ -139,11 +155,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-      <body
-        className={`${spaceGrotesk.variable} ${notoSans.variable} antialiased bg-obsidian min-h-screen noise-overlay`}
-      >
-        {children}
       </body>
     </html>
   );
