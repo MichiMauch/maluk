@@ -44,19 +44,23 @@ export function Button({
     lg: "h-14 px-10 text-lg",
   };
 
-  const skewedStyles = skewed ? "btn-skewed rounded-none" : "rounded-lg";
+  const skewedStyles = skewed ? "rounded-none" : "rounded-lg";
 
   const combinedStyles = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${skewedStyles} ${className}`;
+
+  const skewStyle = skewed ? { transform: "skewX(-10deg)" } : undefined;
+  const skewInnerStyle = skewed ? { transform: "skewX(10deg)" } : undefined;
 
   const content = (
     <>
       {icon && iconPosition === "left" && (
-        <MaterialIcon name={icon} className="mr-2 text-sm" />
+        <MaterialIcon name={icon} className="mr-2 text-sm" style={skewInnerStyle} />
       )}
-      <span className={skewed ? "block" : ""}>{children}</span>
+      <span className={skewed ? "block" : ""} style={skewInnerStyle}>{children}</span>
       {icon && iconPosition === "right" && (
         <motion.span
           className="ml-2"
+          style={skewInnerStyle}
           whileHover={{ x: 4 }}
           transition={{ type: "spring", stiffness: 400 }}
         >
@@ -71,6 +75,7 @@ export function Button({
       <motion.a
         href={href}
         className={combinedStyles}
+        style={skewStyle}
         whileHover={{ scale: variant === "gradient" ? 1.05 : 1 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -83,6 +88,7 @@ export function Button({
     <motion.button
       type={type}
       className={combinedStyles}
+      style={skewStyle}
       onClick={onClick}
       whileHover={{ scale: variant === "gradient" ? 1.05 : 1 }}
       whileTap={{ scale: 0.98 }}
