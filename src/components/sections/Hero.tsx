@@ -10,7 +10,7 @@ import { partners } from "@/data/partners";
 const stats = [
   { label: "Baujahr", value: "1979", unit: "" },
   { label: "Gewicht", value: "905", unit: "kg inkl. Fahrer" },
-  { label: "Motor", value: "2.0", unit: "16V BEWA-Technik" },
+  { label: "Top Speed", value: "197", unit: "km/h" },
 ];
 
 export function Hero() {
