@@ -4,8 +4,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { Modal } from "@/components/ui/Modal";
-import { MaterialIcon } from "@/components/ui";
+import { MaterialIcon, MessageIcon } from "@/components/ui";
 import { trackEvent } from "@/lib/tracking";
+import { escapeHtml } from "@/lib/sanitize";
+import { formatTickerTime, formatTickerDate } from "@/lib/formatting";
 import type { TickerMessage } from "@/lib/ticker";
 
 interface MediaItem {
@@ -20,39 +22,6 @@ interface RaceRecapModalProps {
   onClose: () => void;
   raceSlug: string;
   raceName: string;
-}
-
-function formatTime(dateStr: string) {
-  const date = new Date(dateStr + "Z");
-  return date.toLocaleTimeString("de-CH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Zurich",
-  });
-}
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr + "Z");
-  return date.toLocaleDateString("de-CH", {
-    day: "numeric",
-    month: "long",
-    timeZone: "Europe/Zurich",
-  });
-}
-
-function MessageIcon({ type }: { type: string }) {
-  switch (type) {
-    case "photo":
-      return <MaterialIcon name="photo_camera" className="text-primary text-sm" filled />;
-    case "video":
-      return <MaterialIcon name="videocam" className="text-primary text-sm" filled />;
-    case "result":
-      return <MaterialIcon name="emoji_events" className="text-primary text-sm" filled />;
-    case "status":
-      return <MaterialIcon name="flag" className="text-accent text-sm" filled />;
-    default:
-      return <MaterialIcon name="chat" className="text-primary text-sm" filled />;
-  }
 }
 
 function MediaLightbox({
@@ -214,7 +183,7 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                 <div
                   className="text-gray-200 text-sm leading-relaxed whitespace-pre-line [&>strong]:text-white [&>strong]:font-bold [&>strong]:text-base [&>strong]:block [&>strong]:mb-2"
                   dangerouslySetInnerHTML={{
-                    __html: summary
+                    __html: escapeHtml(summary)
                       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
                       .replace(/\n/g, "<br>"),
                   }}
@@ -284,8 +253,8 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                   <AnimatePresence initial={false}>
                     {messages.map((msg, index) => {
                       // Show date header for first message or when date changes
-                      const prevDate = index > 0 ? formatDate(messages[index - 1].created_at) : null;
-                      const currentDate = formatDate(msg.created_at);
+                      const prevDate = index > 0 ? formatTickerDate(messages[index - 1].created_at) : null;
+                      const currentDate = formatTickerDate(msg.created_at);
                       const showDate = currentDate !== prevDate;
 
                       return (
@@ -310,7 +279,7 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                             <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
                               <MessageIcon type={msg.type} />
                               <span className="text-[10px] text-gray-500 font-mono">
-                                {formatTime(msg.created_at)}
+                                {formatTickerTime(msg.created_at)}
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">

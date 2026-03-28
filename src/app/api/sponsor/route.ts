@@ -1,19 +1,20 @@
 import { NextResponse } from "next/server";
-import { readFile, writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { Resend } from "resend";
 import { escapeHtml } from "@/lib/sanitize";
+import { turso } from "@/lib/turso";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "sponsor-inquiries.json");
-
-interface Inquiry {
-  name: string;
-  company: string;
-  phone: string;
-  email: string;
-  message: string;
-  date: string;
+async function initTable() {
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS sponsor_inquiries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      company TEXT,
+      phone TEXT,
+      email TEXT NOT NULL,
+      message TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 }
 
 export async function POST(request: Request) {
@@ -29,28 +30,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Ungültige E-Mail-Adresse" }, { status: 400 });
     }
 
-    await mkdir(DATA_DIR, { recursive: true });
+    await initTable();
 
-    let inquiries: Inquiry[] = [];
-    try {
-      const data = await readFile(DATA_FILE, "utf-8");
-      inquiries = JSON.parse(data);
-    } catch {
-      // File doesn't exist yet
-    }
-
-    const now = new Date();
-    inquiries.push({
-      name: name.trim(),
-      company: typeof company === "string" ? company.trim() : "",
-      phone: typeof phone === "string" ? phone.trim() : "",
-      email: email.trim(),
-      message: typeof message === "string" ? message.trim() : "",
-      date: now.toISOString(),
+    await turso.execute({
+      sql: "INSERT INTO sponsor_inquiries (name, company, phone, email, message) VALUES (?, ?, ?, ?, ?)",
+      args: [
+        name.trim(),
+        typeof company === "string" ? company.trim() : "",
+        typeof phone === "string" ? phone.trim() : "",
+        email.trim(),
+        typeof message === "string" ? message.trim() : "",
+      ],
     });
-    await writeFile(DATA_FILE, JSON.stringify(inquiries, null, 2), "utf-8");
 
     if (process.env.RESEND_API_KEY && process.env.NOTIFICATION_EMAIL) {
+      const now = new Date();
       const formatted = now.toLocaleString("de-CH", {
         day: "2-digit", month: "2-digit", year: "numeric",
         hour: "2-digit", minute: "2-digit",

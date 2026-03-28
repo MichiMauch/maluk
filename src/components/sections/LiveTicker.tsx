@@ -2,20 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MaterialIcon } from "@/components/ui";
+import { MaterialIcon, MessageIcon } from "@/components/ui";
 import { trackEvent } from "@/lib/tracking";
+import { formatTickerTime } from "@/lib/formatting";
 import type { TickerMessage, RaceStatus } from "@/lib/ticker";
 
 const POLL_INTERVAL = 15_000; // 15 seconds
-
-function formatTime(dateStr: string) {
-  const date = new Date(dateStr + "Z"); // UTC from DB
-  return date.toLocaleTimeString("de-CH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Zurich",
-  });
-}
 
 function StatusBadge({ status }: { status: RaceStatus | null }) {
   if (!status || status === "ende") return null;
@@ -43,21 +35,6 @@ function StatusBadge({ status }: { status: RaceStatus | null }) {
       </span>
     </div>
   );
-}
-
-function MessageIcon({ type }: { type: string }) {
-  switch (type) {
-    case "photo":
-      return <MaterialIcon name="photo_camera" className="text-primary text-base" filled />;
-    case "video":
-      return <MaterialIcon name="videocam" className="text-primary text-base" filled />;
-    case "result":
-      return <MaterialIcon name="emoji_events" className="text-primary text-base" filled />;
-    case "status":
-      return <MaterialIcon name="flag" className="text-accent text-base" filled />;
-    default:
-      return <MaterialIcon name="chat" className="text-primary text-base" filled />;
-  }
 }
 
 export function LiveTicker() {
@@ -146,9 +123,9 @@ export function LiveTicker() {
                   >
                     {/* Time + Icon */}
                     <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-                      <MessageIcon type={msg.type} />
+                      <MessageIcon type={msg.type} size="text-base" />
                       <span className="text-[10px] text-primary/60 font-mono font-bold">
-                        {formatTime(msg.created_at)}
+                        {formatTickerTime(msg.created_at)}
                       </span>
                     </div>
 

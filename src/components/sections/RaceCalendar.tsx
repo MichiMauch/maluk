@@ -99,25 +99,14 @@ export function RaceCalendar() {
   const [recapSlugs, setRecapSlugs] = useState<Set<string>>(new Set());
 
   const checkRecaps = useCallback(async () => {
-    // Check which races have recaps
-    const slugsToCheck = raceEvents
-      .filter((e) => e.status !== "cancelled")
-      .map((e) => e.slug.current);
-
-    const results = await Promise.all(
-      slugsToCheck.map(async (slug) => {
-        try {
-          const res = await fetch(`/api/race-recap?race=${slug}`);
-          if (!res.ok) return null;
-          const data = await res.json();
-          return data.hasRecap ? slug : null;
-        } catch {
-          return null;
-        }
-      })
-    );
-
-    setRecapSlugs(new Set(results.filter(Boolean) as string[]));
+    try {
+      const res = await fetch("/api/race-recaps");
+      if (!res.ok) return;
+      const data = await res.json();
+      setRecapSlugs(new Set(data.slugs as string[]));
+    } catch {
+      // Silently fail
+    }
   }, []);
 
   useEffect(() => {

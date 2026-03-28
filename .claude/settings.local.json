@@ -20,7 +20,9 @@
       "Read(//Users/michaelmauch/**)",
       "Bash(ln -s /Users/michaelmauch/.agents/skills/find-skills /Users/michaelmauch/.claude/skills/find-skills)",
       "Bash(npx skills:*)",
-      "Bash(grep -r \"blurDataURL\\\\|placeholder\\\\s*=\" /Users/michaelmauch/Documents/Development/maluk/src --include=*.tsx --include=*.ts)"
+      "Bash(grep -r \"blurDataURL\\\\|placeholder\\\\s*=\" /Users/michaelmauch/Documents/Development/maluk/src --include=*.tsx --include=*.ts)",
+      "Bash(npx tsx:*)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

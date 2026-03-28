@@ -24,6 +24,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/braichet.png",
       alt: "F. Braichet & Cie - Lubrifiants Porrentruy",
     },
+    website: "https://www.braichet.ch/fr/home",
     description: "Schmierstoffe und Motorenöle",
   },
   {
@@ -48,6 +49,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/hess-uhren.png",
       alt: "Hess Uhren Luzern",
     },
+    website: "https://www.hessuhren.ch/",
     description: "Uhren und Schmuck",
   },
   {
@@ -73,6 +75,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/schorno.avif",
       alt: "Schorno",
     },
+    website: "https://www.schornoag.ch/",
   },
   {
     _id: "partner-006",
@@ -97,6 +100,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/leuko.png",
       alt: "Leuko",
     },
+    website: "https://www.leuko.ch/",
   },
   {
     _id: "partner-008",
@@ -108,6 +112,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/huwyler-klima.png",
       alt: "Huwyler Klima - Kälte und Klimatechnik",
     },
+    website: "https://huwyler-klima.ch/",
     description: "Kälte- und Klimatechnik",
   },
   {
@@ -120,6 +125,7 @@ export const partners: Partner[] = [
       url: "/images/sponsors/marti.png",
       alt: "Marti",
     },
+    website: "https://www.marti-buchs.ch/de/home",
   },
   {
     _id: "partner-010",

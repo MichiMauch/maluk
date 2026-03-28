@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { readFile, writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { Resend } from "resend";
 import { escapeHtml } from "@/lib/sanitize";
+import { turso } from "@/lib/turso";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "club100-members.json");
-
-interface Member {
-  email: string;
-  date: string;
+async function initTable() {
+  await turso.execute(`
+    CREATE TABLE IF NOT EXISTS club100_members (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 }
 
 export async function POST(request: Request) {
@@ -21,26 +22,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Ungültige E-Mail-Adresse" }, { status: 400 });
     }
 
-    await mkdir(DATA_DIR, { recursive: true });
+    await initTable();
 
-    let members: Member[] = [];
-    try {
-      const data = await readFile(DATA_FILE, "utf-8");
-      members = JSON.parse(data);
-    } catch {
-      // File doesn't exist yet — start with empty array
-    }
-
-    if (members.some((m) => m.email.toLowerCase() === email.toLowerCase())) {
+    // Check for duplicate
+    const existing = await turso.execute({
+      sql: "SELECT id FROM club100_members WHERE email = ? COLLATE NOCASE",
+      args: [email],
+    });
+    if (existing.rows.length > 0) {
       return NextResponse.json({ success: true });
     }
 
-    const now = new Date();
-    members.push({ email, date: now.toISOString() });
-    await writeFile(DATA_FILE, JSON.stringify(members, null, 2), "utf-8");
+    await turso.execute({
+      sql: "INSERT INTO club100_members (email) VALUES (?)",
+      args: [email],
+    });
 
     // Fire-and-forget: Benachrichtigung per E-Mail
     if (process.env.RESEND_API_KEY && process.env.NOTIFICATION_EMAIL) {
+      const now = new Date();
       const formatted = now.toLocaleString("de-CH", {
         day: "2-digit", month: "2-digit", year: "numeric",
         hour: "2-digit", minute: "2-digit",
@@ -52,9 +52,7 @@ export async function POST(request: Request) {
         to: process.env.NOTIFICATION_EMAIL,
         subject: "Neues Club 100 Mitglied",
         html: `<p>Neues Club 100 Mitglied: <strong>${escapeHtml(email)}</strong></p><p>Datum: ${formatted}</p>`,
-      }).catch(() => {
-        // Fehler beim Mailversand ignorieren — E-Mail ist bereits gespeichert
-      });
+      }).catch(() => {});
     }
 
     return NextResponse.json({ success: true });

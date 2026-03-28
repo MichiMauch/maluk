@@ -27,7 +27,7 @@ function getEventSchemaMarkup() {
       ...(event.dateEnd && { endDate: event.dateEnd }),
       eventStatus:
         event.status === "completed"
-          ? "https://schema.org/EventScheduled"
+          ? "https://schema.org/EventPast"
           : "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
