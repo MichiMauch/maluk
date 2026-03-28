@@ -27,21 +27,15 @@ export function MobileBottomBar() {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => document.dispatchEvent(new CustomEvent("open-sponsor-modal"))}
-              className="h-11 bg-gradient-to-r from-accent to-primary text-black font-bold text-sm uppercase tracking-wider rounded-none"
-              style={{ transform: "skewX(-10deg)" }}
+              className="h-11 bg-gradient-to-r from-accent to-primary text-black font-bold text-sm uppercase tracking-wider rounded-lg"
             >
-              <span style={{ transform: "skewX(10deg)", display: "block" }}>
-                Sponsor werden
-              </span>
+              Sponsor werden
             </button>
             <button
               onClick={() => document.dispatchEvent(new CustomEvent("open-club100-modal"))}
-              className="h-11 border border-primary/50 bg-primary/10 text-primary font-bold text-sm uppercase tracking-wider rounded-none"
-              style={{ transform: "skewX(-10deg)" }}
+              className="h-11 border border-primary/50 bg-primary/10 text-primary font-bold text-sm uppercase tracking-wider rounded-lg"
             >
-              <span style={{ transform: "skewX(10deg)", display: "block" }}>
-                Club 100
-              </span>
+              Club 100
             </button>
           </div>
         </motion.div>

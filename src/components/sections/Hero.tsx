@@ -143,14 +143,6 @@ export function Hero() {
                 Aktuelle Saison
               </Button>
             </a>
-            <Button
-              variant="outline"
-              skewed
-              className="md:hidden"
-              onClick={() => document.dispatchEvent(new CustomEvent("open-sponsor-modal"))}
-            >
-              Partner werden
-            </Button>
             <Button variant="secondary" skewed onClick={() => setVideoOpen(true)}>
               Onboard ansehen
             </Button>
