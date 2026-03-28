@@ -252,18 +252,6 @@ export const raceEvents2026: RaceEvent[] = [
     season: 2026,
     status: "upcoming",
   },
-  {
-    _id: "race-test-001",
-    _type: "raceEvent",
-    slug: { current: "r-2026" },
-    name: "Testrennen",
-    location: "Testort, Schweiz",
-    dateStart: "2026-12-31",
-    description: "Testrennen für Ticker und Rennbericht.",
-    eventType: "hillclimb",
-    season: 2026,
-    status: "upcoming",
-  },
 ];
 
 // Combined events for display (default: current season)
