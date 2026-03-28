@@ -39,7 +39,7 @@ export function Hero() {
 
       {/* Decorative Lines */}
       <motion.div
-        className="absolute top-[28%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
+        className="absolute top-[31%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
         initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 1.5, delay: 0.5 }}
