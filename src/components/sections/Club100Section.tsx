@@ -59,7 +59,7 @@ export function Club100Section() {
   return (
     <section id="club100" className="w-full max-w-[1280px] px-4 md:px-10 py-8">
       <motion.div
-        className="relative rounded-2xl overflow-hidden border border-primary/20 bg-gradient-to-br from-[#1a0f0a] to-[#0f0506]"
+        className="relative rounded-2xl overflow-hidden border-2 border-primary/40 neon-glow bg-gradient-to-br from-[#1a0f0a] to-[#0f0506]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}

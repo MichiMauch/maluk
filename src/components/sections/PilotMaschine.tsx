@@ -112,7 +112,7 @@ export function PilotMaschine() {
               <GlassCard animated={false} className="h-full p-6 md:p-8 overflow-hidden" delay={0.15}>
                 {/* Car Image */}
                 <motion.div
-                  className="relative w-full h-48 md:h-56 rounded-lg overflow-hidden border border-white/10 mb-6"
+                  className="relative w-full h-48 md:h-56 rounded-lg overflow-hidden border-2 border-primary/40 neon-glow mb-6"
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.5 }}
                 >
