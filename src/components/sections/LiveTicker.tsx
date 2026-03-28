@@ -99,7 +99,7 @@ export function LiveTicker() {
   return (
     <section className="w-full max-w-[1280px] px-4 md:px-10 py-8">
       <motion.div
-        className="relative rounded-2xl overflow-hidden border border-green-500/20 bg-[#111]"
+        className="relative rounded-2xl overflow-hidden border border-green-500/30 bg-black"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -133,12 +133,12 @@ export function LiveTicker() {
                     key={msg.id}
                     className={`flex gap-3 p-3 rounded-lg border ${
                       msg.type === "result"
-                        ? "bg-primary/10 border-primary/20"
+                        ? "bg-primary/15 border-primary/30"
                         : msg.type === "status"
-                          ? "bg-green-500/10 border-green-500/20"
+                          ? "bg-green-500/15 border-green-500/30"
                           : index === 0
-                            ? "bg-white/10 border-white/10"
-                            : "bg-white/[0.07] border-white/5 hover:bg-white/10"
+                            ? "bg-white/15 border-white/15"
+                            : "bg-white/10 border-white/10 hover:bg-white/15"
                     } transition-colors`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
