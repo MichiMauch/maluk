@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import {
   initTickerTables,
   isAdmin,
@@ -16,7 +14,6 @@ import {
 } from "@/lib/telegram";
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
-const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "ticker");
 
 interface TelegramUpdate {
   message?: {
@@ -29,17 +26,13 @@ interface TelegramUpdate {
   };
 }
 
-async function saveImage(fileId: string): Promise<string | null> {
+async function saveImageAsDataUrl(fileId: string): Promise<string | null> {
   const fileUrl = await getTelegramFileUrl(fileId);
   if (!fileUrl) return null;
 
   const buffer = await downloadTelegramFile(fileUrl);
-  const filename = `${Date.now()}-${fileId.slice(-8)}.jpg`;
-
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  await writeFile(path.join(UPLOAD_DIR, filename), buffer);
-
-  return `/images/ticker/${filename}`;
+  const base64 = buffer.toString("base64");
+  return `data:image/jpeg;base64,${base64}`;
 }
 
 function parseCommand(text: string): { command: string; args: string } | null {
@@ -239,7 +232,7 @@ export async function POST(request: NextRequest) {
   if (message.photo && message.photo.length > 0) {
     // Get the largest photo
     const largestPhoto = message.photo[message.photo.length - 1];
-    const imageUrl = await saveImage(largestPhoto.file_id);
+    const imageUrl = await saveImageAsDataUrl(largestPhoto.file_id);
     const caption = message.caption || "📸 Bild aus dem Fahrerlager";
 
     await addTickerMessage(caption, "photo", imageUrl ?? undefined);

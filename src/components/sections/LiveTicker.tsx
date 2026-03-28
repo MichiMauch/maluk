@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { MaterialIcon } from "@/components/ui";
 import { trackEvent } from "@/lib/tracking";
 import type { TickerMessage, RaceStatus } from "@/lib/ticker";
@@ -169,14 +168,12 @@ export function LiveTicker() {
 
                       {/* Photo */}
                       {msg.image_url && (
-                        <div className="relative mt-2 rounded-lg overflow-hidden max-w-sm">
-                          <Image
+                        <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
                             src={msg.image_url}
                             alt={msg.text}
-                            width={400}
-                            height={300}
                             className="w-full h-auto rounded-lg"
-                            sizes="(max-width: 640px) 90vw, 400px"
                           />
                         </div>
                       )}
