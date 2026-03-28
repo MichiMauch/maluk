@@ -91,9 +91,14 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                   <MaterialIcon name="auto_awesome" className="text-base" filled />
                   Zusammenfassung
                 </div>
-                <div className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">
-                  {summary}
-                </div>
+                <div
+                  className="text-gray-200 text-sm leading-relaxed whitespace-pre-line [&>strong]:text-white [&>strong]:font-bold [&>strong]:text-base [&>strong]:block [&>strong]:mb-2"
+                  dangerouslySetInnerHTML={{
+                    __html: summary
+                      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                      .replace(/\n/g, "<br>"),
+                  }}
+                />
               </div>
             )}
 
