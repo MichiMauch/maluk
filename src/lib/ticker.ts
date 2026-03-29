@@ -186,9 +186,13 @@ export async function getMessagesByRace(raceId: string): Promise<TickerMessage[]
 }
 
 export async function getCurrentStatus(): Promise<RaceStatus | null> {
-  const result = await turso.execute(
-    "SELECT race_status FROM ticker_messages WHERE type = 'status' ORDER BY created_at DESC LIMIT 1"
-  );
+  const activeRace = await getActiveRace();
+  if (!activeRace) return null;
+
+  const result = await turso.execute({
+    sql: "SELECT race_status FROM ticker_messages WHERE type = 'status' AND race_id = ? ORDER BY created_at DESC LIMIT 1",
+    args: [activeRace],
+  });
   if (result.rows.length === 0) return null;
   return result.rows[0].race_status as RaceStatus | null;
 }
