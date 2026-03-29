@@ -6,6 +6,8 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function Image() {
+  const carImageUrl = "https://malukracing.ch/images/hero-car.png";
+
   return new ImageResponse(
     (
       <div
@@ -23,6 +25,20 @@ export default function Image() {
           overflow: "hidden",
         }}
       >
+        {/* Car image */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={carImageUrl}
+          alt=""
+          style={{
+            position: "absolute",
+            right: -40,
+            bottom: -20,
+            width: 650,
+            height: "auto",
+            opacity: 0.7,
+          }}
+        />
         {/* Decorative elements */}
         <div
           style={{
