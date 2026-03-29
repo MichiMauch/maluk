@@ -6,16 +6,19 @@ import Image from "next/image";
 import { SectionTitle } from "@/components/ui";
 import { raceEvents, getEventTypeLabel, type RaceEvent } from "@/data/calendar";
 import { RaceRecapModal } from "./RaceRecapModal";
+import { StartgeldModal } from "./StartgeldModal";
 
 function RaceCard({
   race,
   align,
   onRecapClick,
+  onStartgeldClick,
   hasRecap,
 }: {
   race: RaceEvent;
   align: "left" | "right";
   onRecapClick: () => void;
+  onStartgeldClick: () => void;
   hasRecap: boolean;
 }) {
   const isCancelled = race.status === "cancelled";
@@ -80,6 +83,17 @@ function RaceCard({
           </div>
         )
       ) : null}
+      {!isCancelled && (
+        <button
+          onClick={onStartgeldClick}
+          className="w-full h-12 mt-2 border border-accent/30 bg-accent/5 rounded-lg flex items-center justify-center gap-2 text-accent text-xs font-bold uppercase tracking-widest hover:bg-accent/10 transition-colors cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+            volunteer_activism
+          </span>
+          Startgeldsponsor
+        </button>
+      )}
       {isCancelled && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <span
@@ -96,6 +110,7 @@ function RaceCard({
 
 export function RaceCalendar() {
   const [recapModal, setRecapModal] = useState<{ slug: string; name: string } | null>(null);
+  const [startgeldModal, setStartgeldModal] = useState<string | null>(null);
   const [recapSlugs, setRecapSlugs] = useState<Set<string>>(new Set());
 
   const checkRecaps = useCallback(async () => {
@@ -145,6 +160,7 @@ export function RaceCalendar() {
                     align="left"
                     hasRecap={hasRecap}
                     onRecapClick={() => setRecapModal({ slug: race.slug.current, name: race.name })}
+                    onStartgeldClick={() => setStartgeldModal(race.name)}
                   />
                 )}
               </div>
@@ -174,6 +190,7 @@ export function RaceCalendar() {
                     align="right"
                     hasRecap={hasRecap}
                     onRecapClick={() => setRecapModal({ slug: race.slug.current, name: race.name })}
+                    onStartgeldClick={() => setStartgeldModal(race.name)}
                   />
                 )}
               </div>
@@ -189,6 +206,15 @@ export function RaceCalendar() {
           onClose={() => setRecapModal(null)}
           raceSlug={recapModal.slug}
           raceName={recapModal.name}
+        />
+      )}
+
+      {/* Startgeld Modal */}
+      {startgeldModal && (
+        <StartgeldModal
+          open={true}
+          onClose={() => setStartgeldModal(null)}
+          raceName={startgeldModal}
         />
       )}
     </section>
