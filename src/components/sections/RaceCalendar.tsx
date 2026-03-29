@@ -83,7 +83,7 @@ function RaceCard({
           </div>
         )
       ) : null}
-      {!isCancelled && (
+      {!isCancelled && !hasRecap && (
         <button
           onClick={onStartgeldClick}
           className="w-full h-12 mt-2 border border-accent/30 bg-accent/5 rounded-lg flex items-center justify-center gap-2 text-accent text-xs font-bold uppercase tracking-widest hover:bg-accent/10 transition-colors cursor-pointer"
