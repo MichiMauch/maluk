@@ -1,15 +1,15 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "MALUK Racing - Schweizer Bergrennen mit Lukas Maurer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
-  const carImageData = await fetch(
-    new URL("/images/hero-car.png", "https://malukracing.ch")
-  ).then((res) => res.arrayBuffer());
-  const carImageSrc = `data:image/png;base64,${Buffer.from(carImageData).toString("base64")}`;
+  const carBuffer = await readFile(join(process.cwd(), "public", "images", "hero-car.png"));
+  const carImageSrc = `data:image/png;base64,${carBuffer.toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -38,7 +38,7 @@ export default async function Image() {
             right: -40,
             bottom: -20,
             width: 650,
-            height: "auto",
+            height: 430,
             opacity: 0.7,
           }}
         />
