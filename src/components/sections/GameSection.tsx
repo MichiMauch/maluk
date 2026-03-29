@@ -118,8 +118,8 @@ export function GameSection() {
         className="relative rounded-2xl overflow-hidden border-2 border-primary/40 neon-glow bg-gradient-to-br from-[#1a0f0a] to-[#0f0506]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-30px" }}
+        transition={{ duration: 0.6 }}
       >
         {/* Glow Effect */}
         <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full" />
@@ -132,7 +132,7 @@ export function GameSection() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
               <MaterialIcon name="sports_motorsports" className="text-sm" filled />
               Reaktionstest
@@ -143,7 +143,7 @@ export function GameSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.15 }}
             >
               STARTAMPEL-
               <br />
@@ -157,7 +157,7 @@ export function GameSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.2 }}
             >
               Bist du schneller als Lukas? Teste deine Reaktionszeit
               und kämpfe um einen Platz in der Bestenliste.
@@ -289,7 +289,7 @@ export function GameSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.25 }}
             >
               <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export function GameSection() {
                       initial={{ opacity: 0, x: 10 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.6 + index * 0.1 }}
+                      transition={{ delay: 0.3 + index * 0.06 }}
                     >
                       {/* Rank */}
                       <div

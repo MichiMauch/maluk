@@ -81,7 +81,7 @@ export function LiveTicker() {
         className="relative rounded-2xl overflow-hidden border-2 border-primary/40 bg-[#2a2210]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "-30px" }}
         transition={{ duration: 0.8 }}
       >
         {/* Glow */}

@@ -26,7 +26,7 @@ export function Sponsors() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
+              transition={{ delay: index * 0.04 }}
               whileHover={{ scale: 1.05 }}
             >
               {partner.website ? (

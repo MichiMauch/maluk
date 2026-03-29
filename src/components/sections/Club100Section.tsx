@@ -62,8 +62,8 @@ export function Club100Section() {
         className="relative rounded-2xl overflow-hidden border-2 border-primary/40 neon-glow bg-gradient-to-br from-[#1a0f0a] to-[#0f0506]"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-30px" }}
+        transition={{ duration: 0.6 }}
       >
         {/* Glow Effect */}
         <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full" />
@@ -87,7 +87,7 @@ export function Club100Section() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.1 }}
             >
               CLUB{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent pr-1">
@@ -100,7 +100,7 @@ export function Club100Section() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.15 }}
             >
               Werde Teil des inneren Zirkels. Unterstütze das Team direkt und
               erhalte exklusiven Zugang zum Fahrerlager.
@@ -111,7 +111,7 @@ export function Club100Section() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.2 }}
             >
               {/* Benefits */}
               <ul className="grid grid-cols-2 gap-4 mt-6">
@@ -122,7 +122,7 @@ export function Club100Section() {
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
+                    transition={{ delay: 0.25 + index * 0.06 }}
                   >
                     <MaterialIcon
                       name="check_circle"
@@ -139,7 +139,7 @@ export function Club100Section() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 1 }}
+              transition={{ delay: 0.4 }}
             >
               <Button variant="gradient" className="mt-6 w-full md:w-auto" onClick={() => setOpen(true)}>
                 Member werden

@@ -134,8 +134,8 @@ export function RaceCalendar() {
               className="relative flex flex-col md:flex-row items-center mb-16 md:justify-between group"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.6, delay: index * 0.08 }}
             >
               {/* Content Left */}
               <div className="md:w-[45%] w-full order-2 md:order-1 pl-12 md:pl-0 md:pr-12 md:text-right">
