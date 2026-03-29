@@ -55,7 +55,7 @@ export function validateGameToken(
     return { valid: false, error: "Spielsitzung abgelaufen" };
   }
 
-  if (reactionTimeMs < 100) {
+  if (reactionTimeMs < 50) {
     return { valid: false, error: "Reaktionszeit nicht plausibel" };
   }
 
