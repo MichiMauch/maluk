@@ -5,8 +5,11 @@ export const alt = "MALUK Racing - Schweizer Bergrennen mit Lukas Maurer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function Image() {
-  const carImageUrl = "https://malukracing.ch/images/hero-car.png";
+export default async function Image() {
+  const carImageData = await fetch(
+    new URL("/images/hero-car.png", "https://malukracing.ch")
+  ).then((res) => res.arrayBuffer());
+  const carImageSrc = `data:image/png;base64,${Buffer.from(carImageData).toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -28,7 +31,7 @@ export default function Image() {
         {/* Car image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={carImageUrl}
+          src={carImageSrc}
           alt=""
           style={{
             position: "absolute",
