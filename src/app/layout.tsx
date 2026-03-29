@@ -47,10 +47,10 @@ export const metadata: Metadata = {
     locale: "de_CH",
     images: [
       {
-        url: "/images/hero-car.webp",
+        url: `${siteUrl}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "MALUK Racing - Opel Kadett C GT/E",
+        alt: "MALUK Racing - Schweizer Bergrennen mit Lukas Maurer",
       },
     ],
   },
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "MALUK Racing - Schweizer Bergrennen",
     description:
       "Bergrennen-Pilot Lukas Maurer und sein Opel Kadett C GT/E.",
-    images: ["/images/hero-car.webp"],
+    images: [`${siteUrl}/opengraph-image`],
   },
 };
 
