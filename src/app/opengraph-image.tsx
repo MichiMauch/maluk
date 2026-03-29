@@ -36,9 +36,11 @@ export default async function Image() {
           style={{
             position: "absolute",
             right: -40,
-            bottom: -20,
-            width: 650,
-            height: 430,
+            bottom: 0,
+            width: 550,
+            height: 350,
+            objectFit: "contain",
+            objectPosition: "right bottom",
             opacity: 0.7,
           }}
         />
