@@ -54,28 +54,18 @@ export function Hero() {
       <div className="relative z-20 w-full max-w-[1440px] px-8 md:px-6 lg:px-10 flex flex-col justify-start pt-0 md:justify-center md:pt-0 h-full">
         <div className="max-w-[800px] space-y-6">
           {/* Badge */}
-          <motion.div
-            className="flex items-center gap-2 text-primary uppercase tracking-[0.2em] text-xs font-bold"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <div className="flex items-center gap-2 text-primary uppercase tracking-[0.2em] text-xs font-bold">
             <MaterialIcon name="speed" className="text-sm animate-pulse" />
             Schweizer Bergrennen Meisterschaft
-          </motion.div>
+          </div>
 
-          {/* Headline */}
-          <motion.h1
-            className="text-white text-6xl md:text-8xl font-black italic leading-[0.9] tracking-tighter drop-shadow-2xl"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
+          {/* Headline — no animation, this is the LCP element */}
+          <h1 className="text-white text-6xl md:text-8xl font-black italic leading-[0.9] tracking-tighter drop-shadow-2xl">
             PRÄZISION <br />
             <span className="inline-block pr-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
               AM LIMIT
             </span>
-          </motion.h1>
+          </h1>
 
           {/* Car Image - Mobile: in flow between title and text */}
           <div className="relative w-full h-[25vh] md:hidden">
