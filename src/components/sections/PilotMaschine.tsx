@@ -37,8 +37,8 @@ export function PilotMaschine() {
   const opacity = useTransform(scrollYProgress, [0.0, 0.3], [0, 1]);
 
   return (
-    <div ref={containerRef} className="relative" style={isMobile ? undefined : { height: "150vh" }}>
-      <div className={isMobile ? "" : "sticky top-0 h-screen"}>
+    <div ref={containerRef} className="relative">
+      <div>
         <section id="pilot" className="w-full max-w-[1280px] mx-auto px-4 md:px-10 py-8">
           <SectionTitle highlight="Maschine">Pilot &amp; Maschine</SectionTitle>
 
