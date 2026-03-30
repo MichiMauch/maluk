@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const revalidate = 86400; // 1 day
+
 export const metadata: Metadata = {
   title: "Datenschutz - MALUK Racing",
   description: "Datenschutzerklärung von MALUK Racing gemäss Schweizer Datenschutzgesetz (DSG).",

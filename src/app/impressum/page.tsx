@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const revalidate = 86400; // 1 day
+
 export const metadata: Metadata = {
   title: "Impressum - MALUK Racing",
   description: "Impressum von MALUK Racing - Lukas Maurer, Bergrennen-Pilot aus der Schweiz.",

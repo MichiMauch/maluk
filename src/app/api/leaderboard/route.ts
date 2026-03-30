@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
       time: row.time as number,
     }));
 
-    return NextResponse.json(scores);
+    return NextResponse.json(scores, {
+      headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=15" },
+    });
   } catch {
     return NextResponse.json({ error: "Datenbankfehler" }, { status: 500 });
   }
