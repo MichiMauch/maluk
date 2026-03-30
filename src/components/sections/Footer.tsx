@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MaterialIcon } from "@/components/ui";
 
 const navigationLinks = [
   { label: "Home", href: "#" },
@@ -60,9 +61,9 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
           >
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
+            <p className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
               Navigation
-            </h4>
+            </p>
             <ul className="space-y-2 text-sm text-gray-400">
               {navigationLinks.map((link) => (
                 <li key={link.label}>
@@ -85,30 +86,30 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
+            <p className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
               Kontakt
-            </h4>
+            </p>
             <ul className="space-y-2 text-sm text-gray-400">
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">person</span>
+                <MaterialIcon name="person" className="text-xs" />
                 Lukas Maurer
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">location_on</span>
+                <MaterialIcon name="location_on" className="text-xs" />
                 Schiltwald 156, 5046 Walde
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">mail</span>
+                <MaterialIcon name="mail" className="text-xs" />
                 <a href="mailto:lukas.maurer@gmail.com" className="hover:text-primary transition-colors">
                   lukas.maurer@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">account_balance</span>
+                <MaterialIcon name="account_balance" className="text-xs" />
                 Bank Leerau — IBAN CH74 0658 8221 1334 7370 8
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">phone_iphone</span>
+                <MaterialIcon name="phone_iphone" className="text-xs" />
                 Twint: 078 863 94 30
               </li>
             </ul>

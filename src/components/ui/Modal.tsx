@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { MaterialIcon } from "./MaterialIcon";
 
@@ -70,6 +70,8 @@ function ModalContent({ open, onClose, children }: ModalProps) {
 }
 
 export function Modal(props: ModalProps) {
-  if (typeof window === "undefined") return null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   return createPortal(<ModalContent {...props} />, document.body);
 }
