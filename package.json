@@ -19,11 +19,11 @@
     "zustand": "^5.0.11"
   },
   "browserslist": [
-    "chrome >= 80",
-    "edge >= 80",
-    "firefox >= 80",
-    "safari >= 14",
-    "ios_saf >= 14"
+    "chrome >= 90",
+    "edge >= 90",
+    "firefox >= 90",
+    "safari >= 16",
+    "ios_saf >= 16"
   ],
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

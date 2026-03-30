@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Button, MaterialIcon, PartnerScrollBar } from "@/components/ui";
 import { Modal } from "@/components/ui/Modal";
 import Image from "next/image";
@@ -37,17 +36,11 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent z-10" />
 
       {/* Decorative Lines */}
-      <motion.div
-        className="absolute top-[28%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 1.5, delay: 0.5 }}
+      <div
+        className="absolute top-[28%] md:top-1/4 left-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20 animate-[scaleInX_1.5s_0.5s_ease-out_both]"
       />
-      <motion.div
-        className="absolute bottom-[55%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20"
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 1.5, delay: 0.7 }}
+      <div
+        className="absolute bottom-[55%] md:bottom-1/4 right-0 w-1/3 h-[1px] bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 z-20 animate-[scaleInX_1.5s_0.7s_ease-out_both]"
       />
 
       {/* Content */}
@@ -80,31 +73,22 @@ export function Hero() {
           </div>
 
           {/* Tagline */}
-          <motion.p
-            className="text-gray-300 text-lg md:text-xl font-light max-w-xl border-l-2 border-primary pl-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+          <p
+            className="text-gray-300 text-lg md:text-xl font-light max-w-xl border-l-2 border-primary pl-4 animate-[fadeInUp_0.6s_0.5s_ease-out_both]"
           >
             Tauche ein in die Welt des Rennsports mit Lukas Maurer und seinem legendären Opel Kadett C GT/E. Entdecke die Leidenschaft, die hinter jedem Rennen steckt.
-          </motion.p>
+          </p>
 
           {/* Mobile Sponsor Logo Bar */}
-          <motion.div
-            className="md:hidden !mt-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+          <div
+            className="md:hidden !mt-10 animate-[fadeIn_0.8s_0.6s_ease-out_both]"
           >
             <PartnerScrollBar size="sm" />
-          </motion.div>
+          </div>
 
           {/* Buttons */}
-          <motion.div
-            className="flex flex-wrap gap-4 pt-4 pb-8 md:pb-0"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
+          <div
+            className="flex flex-wrap gap-4 pt-4 pb-8 md:pb-0 animate-[fadeInUp_0.6s_0.7s_ease-out_both]"
           >
             <a href="#calendar">
               <Button variant="primary" skewed icon="arrow_forward">
@@ -114,33 +98,26 @@ export function Hero() {
             <Button variant="secondary" skewed onClick={() => setVideoOpen(true)}>
               Onboard ansehen
             </Button>
-          </motion.div>
+          </div>
         </div>
 
         {/* Sponsor Carousel */}
-        <motion.div
-          className="absolute bottom-10 left-6 lg:left-10 hidden lg:block max-w-xs"
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
+        <div
+          className="absolute bottom-10 left-6 lg:left-10 hidden lg:block max-w-xs animate-[fadeInLeft_0.8s_0.9s_ease-out_both]"
         >
           <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">Unsere Partner</p>
           <PartnerScrollBar size="md" />
-        </motion.div>
+        </div>
 
         {/* Stats */}
-        <motion.div
-          className="absolute bottom-10 right-10 hidden lg:flex gap-12 text-white"
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
+        <div
+          className="absolute bottom-10 right-10 hidden lg:flex gap-12 text-white animate-[fadeInRight_0.8s_0.9s_ease-out_both]"
         >
           {stats.map((stat, index) => (
-            <motion.div
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 + index * 0.15 }}
+              className="animate-[fadeInUp_0.6s_ease-out_both]"
+              style={{ animationDelay: `${1 + index * 0.15}s` }}
             >
               <div className="text-xs text-gray-400 uppercase tracking-widest">
                 {stat.label}
@@ -149,9 +126,9 @@ export function Hero() {
                 {stat.value}{" "}
                 <span className="text-sm text-primary">{stat.unit}</span>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Onboard Video Lightbox */}
