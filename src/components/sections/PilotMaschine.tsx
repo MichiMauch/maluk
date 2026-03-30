@@ -130,6 +130,7 @@ export function PilotMaschine() {
                       loop
                       muted
                       playsInline
+                      preload="none"
                       className="w-full h-full object-cover scale-[1.3]"
                     />
                   ) : (

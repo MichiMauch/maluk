@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { SectionTitle } from "@/components/ui";
+import { SectionTitle, MaterialIcon } from "@/components/ui";
 import { raceEvents, getEventTypeLabel, type RaceEvent } from "@/data/calendar";
 import { RaceRecapModal } from "./RaceRecapModal";
 import { StartgeldModal } from "./StartgeldModal";
@@ -72,9 +72,7 @@ function RaceCard({
             onClick={onRecapClick}
             className="w-full h-16 mt-3 border border-primary/30 bg-primary/5 rounded-lg flex items-center justify-center gap-2 text-primary text-xs font-bold uppercase tracking-widest hover:bg-primary/10 transition-colors cursor-pointer"
           >
-            <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-              article
-            </span>
+            <MaterialIcon name="article" className="text-base" />
             Rennbericht
           </button>
         ) : (
@@ -88,9 +86,7 @@ function RaceCard({
           onClick={onStartgeldClick}
           className="w-full h-12 mt-2 border border-accent/30 bg-accent/5 rounded-lg flex items-center justify-center gap-2 text-accent text-xs font-bold uppercase tracking-widest hover:bg-accent/10 transition-colors cursor-pointer"
         >
-          <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-            volunteer_activism
-          </span>
+          <MaterialIcon name="volunteer_activism" className="text-base" />
           Startgeldsponsor
         </button>
       )}
