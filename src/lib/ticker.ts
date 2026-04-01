@@ -5,6 +5,7 @@ export type RaceStatus = "live" | "pause" | "ende";
 
 export interface TickerMessage {
   id: number;
+  telegram_message_id: number | null;
   text: string;
   image_url: string | null;
   type: TickerMessageType;
@@ -60,11 +61,23 @@ export async function initTickerTables() {
     `),
   ]);
 
-  // Migration for existing DBs
+  // Migrations for existing DBs
   try {
     await turso.execute("ALTER TABLE ticker_messages ADD COLUMN race_id TEXT");
   } catch {
     // Column already exists
+  }
+
+  try {
+    await turso.execute("ALTER TABLE ticker_messages ADD COLUMN telegram_message_id INTEGER");
+  } catch {
+    // Column already exists
+  }
+
+  try {
+    await turso.execute("CREATE INDEX IF NOT EXISTS idx_ticker_telegram_msg_id ON ticker_messages (telegram_message_id)");
+  } catch {
+    // Index already exists
   }
 
   tablesInitialized = true;
@@ -131,6 +144,7 @@ function mapRow(row: Record<string, unknown>): TickerMessage {
 
   return {
     id,
+    telegram_message_id: (row.telegram_message_id as number) ?? null,
     text: row.text as string,
     image_url: imageUrl,
     type,
@@ -147,17 +161,45 @@ export async function addTickerMessage(
   type: TickerMessageType = "text",
   imageUrl?: string,
   raceStatus?: RaceStatus,
-  raceId?: string
+  raceId?: string,
+  telegramMessageId?: number
 ) {
   await turso.execute({
-    sql: "INSERT INTO ticker_messages (text, image_url, type, race_status, race_id) VALUES (?, ?, ?, ?, ?)",
-    args: [text, imageUrl ?? null, type, raceStatus ?? null, raceId ?? null],
+    sql: "INSERT INTO ticker_messages (text, image_url, type, race_status, race_id, telegram_message_id) VALUES (?, ?, ?, ?, ?, ?)",
+    args: [text, imageUrl ?? null, type, raceStatus ?? null, raceId ?? null, telegramMessageId ?? null],
   });
+}
+
+export async function updateTickerMessageByTelegramId(
+  telegramMessageId: number,
+  text: string,
+  imageUrl?: string
+): Promise<boolean> {
+  const result = imageUrl !== undefined
+    ? await turso.execute({
+        sql: "UPDATE ticker_messages SET text = ?, image_url = ? WHERE telegram_message_id = ?",
+        args: [text, imageUrl, telegramMessageId],
+      })
+    : await turso.execute({
+        sql: "UPDATE ticker_messages SET text = ? WHERE telegram_message_id = ?",
+        args: [text, telegramMessageId],
+      });
+  return result.rowsAffected > 0;
+}
+
+export async function deleteTickerMessageByTelegramId(
+  telegramMessageId: number
+): Promise<boolean> {
+  const result = await turso.execute({
+    sql: "DELETE FROM ticker_messages WHERE telegram_message_id = ?",
+    args: [telegramMessageId],
+  });
+  return result.rowsAffected > 0;
 }
 
 export async function getTickerMessages(limit = 50): Promise<TickerMessage[]> {
   const result = await turso.execute({
-    sql: "SELECT id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages ORDER BY created_at DESC LIMIT ?",
+    sql: "SELECT id, telegram_message_id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages ORDER BY created_at DESC LIMIT ?",
     args: [limit],
   });
 
@@ -169,7 +211,7 @@ export async function getActiveRaceMessages(limit = 50): Promise<TickerMessage[]
   if (!activeRace) return [];
 
   const result = await turso.execute({
-    sql: "SELECT id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at DESC LIMIT ?",
+    sql: "SELECT id, telegram_message_id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at DESC LIMIT ?",
     args: [activeRace, limit],
   });
 
@@ -178,7 +220,7 @@ export async function getActiveRaceMessages(limit = 50): Promise<TickerMessage[]
 
 export async function getMessagesByRace(raceId: string): Promise<TickerMessage[]> {
   const result = await turso.execute({
-    sql: "SELECT id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at ASC",
+    sql: "SELECT id, telegram_message_id, text, image_url, type, race_status, race_id, created_at FROM ticker_messages WHERE race_id = ? ORDER BY created_at ASC",
     args: [raceId],
   });
 

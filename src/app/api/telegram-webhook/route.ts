@@ -5,6 +5,8 @@ import {
   addAdmin,
   removeAdmin,
   addTickerMessage,
+  updateTickerMessageByTelegramId,
+  deleteTickerMessageByTelegramId,
   clearTicker,
   setActiveRace,
   getActiveRace,
@@ -30,17 +32,21 @@ function findEventBySlug(slug: string) {
   return allEvents.find((e) => e.slug.current === slug);
 }
 
+interface TelegramMessage {
+  message_id: number;
+  from: { id: number; first_name: string; username?: string };
+  chat: { id: number };
+  text?: string;
+  photo?: Array<{ file_id: string; width: number; height: number }>;
+  video?: { file_id: string; file_size?: number; mime_type?: string };
+  video_note?: { file_id: string; file_size?: number };
+  caption?: string;
+  reply_to_message?: TelegramMessage;
+}
+
 interface TelegramUpdate {
-  message?: {
-    message_id: number;
-    from: { id: number; first_name: string; username?: string };
-    chat: { id: number };
-    text?: string;
-    photo?: Array<{ file_id: string; width: number; height: number }>;
-    video?: { file_id: string; file_size?: number; mime_type?: string };
-    video_note?: { file_id: string; file_size?: number };
-    caption?: string;
-  };
+  message?: TelegramMessage;
+  edited_message?: TelegramMessage;
 }
 
 async function saveImageAsDataUrl(fileId: string): Promise<string | null> {
@@ -71,6 +77,39 @@ export async function POST(request: NextRequest) {
     update = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  // Handle edited messages
+  if (update.edited_message) {
+    const edited = update.edited_message;
+    const chatId = String(edited.chat.id);
+
+    await initTickerTables();
+    const authorized = await isAdmin(chatId);
+    if (!authorized) return NextResponse.json({ ok: true });
+
+    const newText = edited.text || edited.caption;
+    if (newText) {
+      // Re-download photo if the edited message has one
+      let newImageUrl: string | undefined;
+      if (edited.photo && edited.photo.length > 0) {
+        const largestPhoto = edited.photo[edited.photo.length - 1];
+        const dataUrl = await saveImageAsDataUrl(largestPhoto.file_id);
+        if (dataUrl) newImageUrl = dataUrl;
+      }
+
+      const updated = await updateTickerMessageByTelegramId(
+        edited.message_id,
+        newText,
+        newImageUrl
+      );
+      if (updated) {
+        await invalidateTickerCache();
+        await sendTelegramMessage(chatId, "✅ Ticker-Eintrag aktualisiert");
+      }
+    }
+
+    return NextResponse.json({ ok: true });
   }
 
   const message = update.message;
@@ -121,6 +160,8 @@ export async function POST(request: NextRequest) {
                 ? "• /invite <chat_id> <name> → Teammitglied\n" +
                   "• /remove <chat_id> → Entfernen\n"
                 : "") +
+              "• /delete → Antwort auf Nachricht → Ticker-Eintrag löschen\n" +
+              "• Nachricht editieren → Ticker wird aktualisiert\n" +
               "• /clear → Ticker leeren\n\n" +
               "Verfügbare Rennen-Slugs:\n" +
               validSlugs.map((s) => `  ${s}`).join("\n")
@@ -237,7 +278,7 @@ export async function POST(request: NextRequest) {
             await sendTelegramMessage(chatId, "Verwendung: /ergebnis P3 1:43.25");
             return NextResponse.json({ ok: true });
           }
-          await addTickerMessage(`🏆 Ergebnis: ${parsed.args}`, "result", undefined, undefined, activeRaceId ?? undefined);
+          await addTickerMessage(`🏆 Ergebnis: ${parsed.args}`, "result", undefined, undefined, activeRaceId ?? undefined, message.message_id);
           await invalidateTickerCache();
           await sendTelegramMessage(chatId, "✅ Ergebnis gepostet");
           return NextResponse.json({ ok: true });
@@ -275,6 +316,22 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true });
         }
 
+        case "delete": {
+          const replyMsg = message.reply_to_message;
+          if (!replyMsg) {
+            await sendTelegramMessage(chatId, "Verwendung: Auf eine Nachricht antworten mit /delete");
+            return NextResponse.json({ ok: true });
+          }
+          const deleted = await deleteTickerMessageByTelegramId(replyMsg.message_id);
+          if (deleted) {
+            await invalidateTickerCache();
+            await sendTelegramMessage(chatId, "✅ Ticker-Eintrag gelöscht");
+          } else {
+            await sendTelegramMessage(chatId, "⚠️ Eintrag nicht gefunden (evtl. vor dem Update erstellt)");
+          }
+          return NextResponse.json({ ok: true });
+        }
+
         case "clear": {
           await clearTicker();
           await invalidateTickerCache();
@@ -294,7 +351,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Regular text message
-    await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined);
+    await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Im Ticker gepostet");
     return NextResponse.json({ ok: true });
@@ -306,7 +363,7 @@ export async function POST(request: NextRequest) {
     const imageUrl = await saveImageAsDataUrl(largestPhoto.file_id);
     const caption = message.caption || "📸 Bild aus dem Fahrerlager";
 
-    await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined);
+    await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Bild gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Bild im Ticker gepostet");
     return NextResponse.json({ ok: true });
@@ -332,7 +389,7 @@ export async function POST(request: NextRequest) {
     const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
     const caption = message.caption || "🎬 Video aus dem Fahrerlager";
 
-    await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined);
+    await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Video gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Video im Ticker gepostet");
     return NextResponse.json({ ok: true });
