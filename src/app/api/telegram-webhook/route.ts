@@ -339,7 +339,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true });
           }
 
-          const fanName = fanMsg.from?.first_name ?? "Fan";
+          const rawName = fanMsg.from?.first_name;
+          const fanName = (!rawName || rawName === "Group" || rawName === "Channel") ? "Fan" : rawName;
           const customCaption = parsed.args || null;
 
           // Fan photo
