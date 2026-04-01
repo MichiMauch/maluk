@@ -130,8 +130,13 @@ export async function POST(request: NextRequest) {
 
   await initTickerTables();
 
-  // In groups, check the sender's user ID; in private chats, chat ID = user ID
-  const authorized = await isAdmin(userId);
+  // Telegram uses special from.id values for anonymous group/channel admins:
+  // 1087968824 = Channel (posts forwarded from linked channel)
+  // 136817688 = GroupAnonymousBot (admin posting as group)
+  const ANON_GROUP_BOT_ID = "136817688";
+  const ANON_CHANNEL_BOT_ID = "1087968824";
+  const isAnonymousAdmin = isGroup && (userId === ANON_GROUP_BOT_ID || userId === ANON_CHANNEL_BOT_ID);
+  const authorized = isAnonymousAdmin || await isAdmin(userId);
   if (!authorized) {
     if (!isGroup) {
       await sendTelegramMessage(
