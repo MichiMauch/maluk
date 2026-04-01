@@ -18,6 +18,7 @@ import {
   downloadTelegramFile,
 } from "@/lib/telegram";
 import { generateRaceSummary } from "@/lib/ai-summary";
+import { invalidateTickerCache } from "@/lib/redis";
 import { raceEvents2024, raceEvents2026 } from "@/data/calendar";
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -208,6 +209,7 @@ export async function POST(request: NextRequest) {
             "live",
             arg
           );
+          await invalidateTickerCache();
           await sendTelegramMessage(chatId, `✅ Rennen gestartet: ${event?.name ?? arg}\nAlle Nachrichten werden diesem Rennen zugeordnet.`);
           return NextResponse.json({ ok: true });
         }
@@ -225,6 +227,7 @@ export async function POST(request: NextRequest) {
                 ? "🟡 Rennpause"
                 : "🏁 Renntag beendet";
           await addTickerMessage(statusText, "status", undefined, status as "live" | "pause" | "ende", activeRaceId ?? undefined);
+          await invalidateTickerCache();
           await sendTelegramMessage(chatId, `✅ Status: ${statusText}`);
           return NextResponse.json({ ok: true });
         }
@@ -235,6 +238,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true });
           }
           await addTickerMessage(`🏆 Ergebnis: ${parsed.args}`, "result", undefined, undefined, activeRaceId ?? undefined);
+          await invalidateTickerCache();
           await sendTelegramMessage(chatId, "✅ Ergebnis gepostet");
           return NextResponse.json({ ok: true });
         }
@@ -273,6 +277,7 @@ export async function POST(request: NextRequest) {
 
         case "clear": {
           await clearTicker();
+          await invalidateTickerCache();
           await sendTelegramMessage(chatId, "✅ Ticker geleert");
           return NextResponse.json({ ok: true });
         }
@@ -290,6 +295,7 @@ export async function POST(request: NextRequest) {
 
     // Regular text message
     await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined);
+    await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
@@ -301,6 +307,7 @@ export async function POST(request: NextRequest) {
     const caption = message.caption || "📸 Bild aus dem Fahrerlager";
 
     await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined);
+    await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Bild gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Bild im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
@@ -326,6 +333,7 @@ export async function POST(request: NextRequest) {
     const caption = message.caption || "🎬 Video aus dem Fahrerlager";
 
     await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined);
+    await invalidateTickerCache();
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Video gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Video im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
