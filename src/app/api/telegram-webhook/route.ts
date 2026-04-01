@@ -421,8 +421,9 @@ export async function POST(request: NextRequest) {
     // Regular text message
     await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
-    await forwardToChannel(message.text);
-    await sendTelegramMessage(chatId, activeRaceId ? `✅ Gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Im Ticker gepostet");
+    const channelErr = await forwardToChannel(message.text);
+    const posted = activeRaceId ? `✅ Gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Im Ticker gepostet";
+    await sendTelegramMessage(chatId, channelErr ? `${posted}\n⚠️ ${channelErr}` : posted);
     return NextResponse.json({ ok: true });
   }
 

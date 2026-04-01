@@ -27,16 +27,41 @@ export async function sendTelegramVideo(chatId: string, fileId: string, caption?
   });
 }
 
-export async function forwardToChannel(text: string, fileId?: string, mediaType?: "photo" | "video") {
+export async function forwardToChannel(text: string, fileId?: string, mediaType?: "photo" | "video"): Promise<string | null> {
   const channelId = process.env.TELEGRAM_CHANNEL_ID;
-  if (!BOT_TOKEN || !channelId) return;
+  if (!BOT_TOKEN || !channelId) return channelId ? "no bot token" : "no channel id";
 
-  if (fileId && mediaType === "photo") {
-    await sendTelegramPhoto(channelId, fileId, text);
-  } else if (fileId && mediaType === "video") {
-    await sendTelegramVideo(channelId, fileId, text);
-  } else {
-    await sendTelegramMessage(channelId, text);
+  try {
+    let res: Response;
+    if (fileId && mediaType === "photo") {
+      res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: channelId, photo: fileId, caption: text }),
+      });
+    } else if (fileId && mediaType === "video") {
+      res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: channelId, video: fileId, caption: text }),
+      });
+    } else {
+      res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: channelId, text }),
+      });
+    }
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error("Channel forward failed:", err);
+      return `Kanal-Fehler: ${err.description ?? res.status}`;
+    }
+    return null;
+  } catch (e) {
+    console.error("Channel forward error:", e);
+    return `Kanal-Fehler: ${e instanceof Error ? e.message : "Unbekannt"}`;
   }
 }
 
