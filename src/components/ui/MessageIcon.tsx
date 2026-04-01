@@ -23,6 +23,8 @@ export function MessageIcon({ type, size = "text-sm", isFan = false }: { type: s
       return <MaterialIcon name="emoji_events" className={`text-primary ${size}`} filled />;
     case "status":
       return <MaterialIcon name="flag" className={`text-accent ${size}`} filled />;
+    case "sponsor":
+      return <MaterialIcon name="handshake" className={`text-emerald-400 ${size}`} filled />;
     default:
       return <MaterialIcon name="chat" className={`text-primary ${size}`} filled />;
   }

@@ -296,13 +296,15 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                           )}
                           <motion.div
                             className={`flex gap-3 p-3 rounded-lg border ${
-                              msg.is_fan
-                                ? "bg-cyan-500/10 border-cyan-500/20"
-                                : msg.type === "result"
-                                  ? "bg-primary/10 border-primary/20"
-                                  : msg.type === "status"
-                                    ? "bg-accent/10 border-accent/20"
-                                    : "bg-white/5 border-white/5"
+                              msg.type === "sponsor"
+                                ? "bg-emerald-500/10 border-emerald-500/20"
+                                : msg.is_fan
+                                  ? "bg-cyan-500/10 border-cyan-500/20"
+                                  : msg.type === "result"
+                                    ? "bg-primary/10 border-primary/20"
+                                    : msg.type === "status"
+                                      ? "bg-accent/10 border-accent/20"
+                                      : "bg-white/5 border-white/5"
                             }`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -315,17 +317,32 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p
-                                className={`text-sm leading-relaxed ${
-                                  msg.type === "result"
-                                    ? "text-primary font-bold"
-                                    : msg.type === "status"
-                                      ? "text-accent font-bold"
-                                      : "text-gray-200"
-                                }`}
-                              >
-                                {msg.text}
-                              </p>
+                              {(() => {
+                                const sponsorMatch = msg.text.match(/^\{\{sponsor:(.*?)\}\}([\s\S]*)$/);
+                                const sponsorUrl = sponsorMatch?.[1];
+                                const displayText = sponsorMatch ? sponsorMatch[2] : msg.text;
+                                return (
+                                  <p
+                                    className={`text-sm leading-relaxed ${
+                                      msg.type === "sponsor"
+                                        ? "text-emerald-300 font-bold"
+                                        : msg.type === "result"
+                                          ? "text-primary font-bold"
+                                          : msg.type === "status"
+                                            ? "text-accent font-bold"
+                                            : "text-gray-200"
+                                    }`}
+                                  >
+                                    {displayText}
+                                    {msg.type === "sponsor" && msg.image_url && sponsorUrl && (
+                                      <a href={sponsorUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={msg.image_url} alt={displayText} className="h-10 w-auto object-contain rounded opacity-90 hover:opacity-100 transition-opacity" />
+                                      </a>
+                                    )}
+                                  </p>
+                                );
+                              })()}
                               {msg.image_url && (msg.type === "video" || msg.type === "photo") ? (() => {
                                 const allMedia: MediaItem[] = messages
                                   .filter((m) => m.image_url && (m.type === "photo" || m.type === "video"))

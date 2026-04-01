@@ -133,13 +133,15 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
               <motion.div
                 key={msg.id}
                 className={`flex gap-3 p-3 rounded-xl border ${
-                  msg.is_fan
-                    ? "bg-[#0a2a2a] border-cyan-500/30"
-                    : msg.type === "result"
-                      ? "bg-[#3a2d00] border-primary/40"
-                      : msg.type === "status"
-                        ? "bg-[#2a1010] border-accent/40"
-                        : "bg-[#403520] border-primary/25"
+                  msg.type === "sponsor"
+                    ? "bg-[#0a2a1a] border-emerald-500/30"
+                    : msg.is_fan
+                      ? "bg-[#0a2a2a] border-cyan-500/30"
+                      : msg.type === "result"
+                        ? "bg-[#3a2d00] border-primary/40"
+                        : msg.type === "status"
+                          ? "bg-[#2a1010] border-accent/40"
+                          : "bg-[#403520] border-primary/25"
                 }`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -153,19 +155,36 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p
-                    className={`text-sm leading-relaxed ${
-                      msg.type === "result"
-                        ? "text-primary font-bold"
-                        : msg.type === "status"
-                          ? "text-accent font-bold"
-                          : "text-white"
-                    }`}
-                  >
-                    {msg.text}
-                  </p>
+                  {(() => {
+                    // Parse sponsor metadata from text
+                    const sponsorMatch = msg.text.match(/^\{\{sponsor:(.*?)\}\}([\s\S]*)$/);
+                    const sponsorUrl = sponsorMatch?.[1];
+                    const displayText = sponsorMatch ? sponsorMatch[2] : msg.text;
 
-                  {msg.image_url && msg.type === "video" ? (
+                    return (
+                      <p
+                        className={`text-sm leading-relaxed ${
+                          msg.type === "sponsor"
+                            ? "text-emerald-300 font-bold"
+                            : msg.type === "result"
+                              ? "text-primary font-bold"
+                              : msg.type === "status"
+                                ? "text-accent font-bold"
+                                : "text-white"
+                        }`}
+                      >
+                        {displayText}
+                        {msg.type === "sponsor" && msg.image_url && sponsorUrl && (
+                          <a href={sponsorUrl} target="_blank" rel="noopener noreferrer" className="block mt-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={msg.image_url} alt={displayText} className="h-10 w-auto object-contain rounded opacity-90 hover:opacity-100 transition-opacity" />
+                          </a>
+                        )}
+                      </p>
+                    );
+                  })()}
+
+                  {msg.type !== "sponsor" && msg.image_url && msg.type === "video" ? (
                     <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
                       <video
                         src={msg.image_url}
@@ -175,7 +194,7 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
                         className="w-full h-auto rounded-lg"
                       />
                     </div>
-                  ) : msg.image_url ? (
+                  ) : msg.type !== "sponsor" && msg.image_url ? (
                     <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img

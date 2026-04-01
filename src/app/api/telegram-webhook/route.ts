@@ -386,12 +386,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true });
           }
 
-          const tierLabel = { platinum: "Platin", gold: "Gold", silver: "Silber", bronze: "Bronze" }[partner.tier];
           const customText = textParts.join(" ");
-          const urlText = partner.website ? `\n🔗 ${partner.website}` : "";
           const sponsorText = customText
-            ? `🤝 ${partner.name} (${tierLabel}-Partner): ${customText}${urlText}`
-            : `🤝 Danke an unseren ${tierLabel}-Partner ${partner.name}!${urlText}`;
+            ? `🤝 ${partner.name}: ${customText}`
+            : `🤝 Danke an unseren Partner ${partner.name}!`;
 
           // Read logo from public directory and store as base64
           let logoDataUrl: string | undefined;
@@ -409,8 +407,12 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          const msgType = logoDataUrl ? "photo" : "text";
-          await addTickerMessage(sponsorText, msgType, logoDataUrl, undefined, activeRaceId ?? undefined, message.message_id);
+          // Store website URL as metadata prefix so frontend can parse it
+          const textWithMeta = partner.website
+            ? `{{sponsor:${partner.website}}}${sponsorText}`
+            : sponsorText;
+
+          await addTickerMessage(textWithMeta, "sponsor", logoDataUrl, undefined, activeRaceId ?? undefined, message.message_id);
           await invalidateTickerCache();
           await forwardToChannel(sponsorText);
           await sendTelegramMessage(chatId, `✅ Sponsor-Shoutout für ${partner.name} gepostet`);
