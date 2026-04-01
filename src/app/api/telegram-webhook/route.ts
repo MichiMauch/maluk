@@ -352,11 +352,29 @@ export async function POST(request: NextRequest) {
 
           const tierLabel = { platinum: "Platin", gold: "Gold", silver: "Silber", bronze: "Bronze" }[partner.tier];
           const customText = textParts.join(" ");
+          const urlText = partner.website ? `\n🔗 ${partner.website}` : "";
           const sponsorText = customText
-            ? `🤝 ${partner.name} (${tierLabel}-Partner): ${customText}`
-            : `🤝 Danke an unseren ${tierLabel}-Partner ${partner.name}!`;
+            ? `🤝 ${partner.name} (${tierLabel}-Partner): ${customText}${urlText}`
+            : `🤝 Danke an unseren ${tierLabel}-Partner ${partner.name}!${urlText}`;
 
-          await addTickerMessage(sponsorText, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
+          // Read logo from public directory and store as base64
+          let logoDataUrl: string | undefined;
+          if (partner.logo?.url) {
+            try {
+              const fs = await import("fs/promises");
+              const path = await import("path");
+              const logoPath = path.join(process.cwd(), "public", partner.logo.url);
+              const buffer = await fs.readFile(logoPath);
+              const ext = partner.logo.url.split(".").pop()?.toLowerCase();
+              const mime = ext === "svg" ? "image/svg+xml" : ext === "avif" ? "image/avif" : ext === "png" ? "image/png" : "image/jpeg";
+              logoDataUrl = `data:${mime};base64,${buffer.toString("base64")}`;
+            } catch {
+              // Logo not found, post without image
+            }
+          }
+
+          const msgType = logoDataUrl ? "photo" : "text";
+          await addTickerMessage(sponsorText, msgType, logoDataUrl, undefined, activeRaceId ?? undefined, message.message_id);
           await invalidateTickerCache();
           await forwardToChannel(sponsorText);
           await sendTelegramMessage(chatId, `✅ Sponsor-Shoutout für ${partner.name} gepostet`);
