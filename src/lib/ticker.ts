@@ -87,6 +87,12 @@ export async function initTickerTables() {
     // Column already exists
   }
 
+  try {
+    await turso.execute("ALTER TABLE active_race ADD COLUMN ticker_sponsor_slug TEXT");
+  } catch {
+    // Column already exists
+  }
+
   tablesInitialized = true;
 }
 
@@ -134,6 +140,23 @@ export async function getActiveRace(): Promise<string | null> {
 
 export async function clearActiveRace() {
   await turso.execute("DELETE FROM active_race WHERE id = 1");
+}
+
+export async function setTickerSponsor(slug: string) {
+  await turso.execute({
+    sql: "UPDATE active_race SET ticker_sponsor_slug = ? WHERE id = 1",
+    args: [slug],
+  });
+}
+
+export async function clearTickerSponsor() {
+  await turso.execute("UPDATE active_race SET ticker_sponsor_slug = NULL WHERE id = 1");
+}
+
+export async function getTickerSponsor(): Promise<string | null> {
+  const result = await turso.execute("SELECT ticker_sponsor_slug FROM active_race WHERE id = 1");
+  if (result.rows.length === 0) return null;
+  return result.rows[0].ticker_sponsor_slug as string | null;
 }
 
 // --- Helpers ---

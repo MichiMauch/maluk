@@ -46,6 +46,7 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
   const [messages, setMessages] = useState<TickerMessage[]>([]);
   const [status, setStatus] = useState<RaceStatus | null>(null);
   const [raceName, setRaceName] = useState<string | null>(null);
+  const [tickerSponsor, setTickerSponsor] = useState<{ name: string; logo: string | null; website: string | null; tier: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasTracked, setHasTracked] = useState(false);
 
@@ -57,6 +58,7 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
         setMessages(data.messages);
         setStatus(data.status);
         setRaceName(data.activeRaceName);
+        setTickerSponsor(data.tickerSponsor ?? null);
       }
     } catch {
       // Silently fail
@@ -93,6 +95,28 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
 
       {raceName && (
         <p className="text-white/60 text-sm mb-4">{raceName}</p>
+      )}
+
+      {/* Ticker Sponsor Banner - Top */}
+      {tickerSponsor && (
+        <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5 mb-4">
+          {tickerSponsor.logo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={tickerSponsor.logo} alt={tickerSponsor.name} className="h-8 w-auto object-contain shrink-0" />
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-white/70 text-xs">
+              Dieser Ticker wird präsentiert von{" "}
+              {tickerSponsor.website ? (
+                <a href={tickerSponsor.website} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">
+                  {tickerSponsor.name}
+                </a>
+              ) : (
+                <span className="text-primary font-bold">{tickerSponsor.name}</span>
+              )}
+            </p>
+          </div>
+        </div>
       )}
 
       {/* Messages */}
@@ -163,6 +187,28 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
               </motion.div>
             ))}
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Ticker Sponsor Banner - Bottom */}
+      {tickerSponsor && !loading && messages.length > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5 mt-4">
+          {tickerSponsor.logo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={tickerSponsor.logo} alt={tickerSponsor.name} className="h-8 w-auto object-contain shrink-0" />
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-white/70 text-xs">
+              Dieser Ticker wird präsentiert von{" "}
+              {tickerSponsor.website ? (
+                <a href={tickerSponsor.website} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">
+                  {tickerSponsor.name}
+                </a>
+              ) : (
+                <span className="text-primary font-bold">{tickerSponsor.name}</span>
+              )}
+            </p>
+          </div>
         </div>
       )}
     </Modal>

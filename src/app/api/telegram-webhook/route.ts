@@ -13,6 +13,8 @@ import {
   clearActiveRace,
   getMessagesByRace,
   saveSummary,
+  setTickerSponsor,
+  clearTickerSponsor,
 } from "@/lib/ticker";
 import {
   sendTelegramMessage,
@@ -172,6 +174,7 @@ export async function POST(request: NextRequest) {
                 ? "• /invite <chat_id> <name> → Teammitglied\n" +
                   "• /remove <chat_id> → Entfernen\n"
                 : "") +
+              "• /tickersponsor <slug> → Ticker-Sponsor (oben+unten)\n" +
               "• /sponsor <slug> [Text] → Sponsor-Shoutout\n" +
               "• /fan → Antwort auf Fan-Nachricht → ins Ticker übernehmen\n" +
               "• /fan Text → mit eigener Beschreibung\n" +
@@ -331,6 +334,39 @@ export async function POST(request: NextRequest) {
           }
           await removeAdmin(removeChatId);
           await sendTelegramMessage(chatId, `✅ ${removeChatId} entfernt`);
+          return NextResponse.json({ ok: true });
+        }
+
+        case "tickersponsor": {
+          const arg = parsed.args.trim().toLowerCase();
+          if (!arg) {
+            const list = partners.map((p) => `  ${p.slug.current} — ${p.name}`).join("\n");
+            await sendTelegramMessage(chatId, `Verwendung:\n/tickersponsor <slug> → Ticker-Sponsor setzen\n/tickersponsor off → Entfernen\n\nPartner:\n${list}`);
+            return NextResponse.json({ ok: true });
+          }
+
+          if (arg === "off") {
+            await clearTickerSponsor();
+            await invalidateTickerCache();
+            await sendTelegramMessage(chatId, "✅ Ticker-Sponsor entfernt");
+            return NextResponse.json({ ok: true });
+          }
+
+          const sponsorPartner = partners.find((p) => p.slug.current === arg);
+          if (!sponsorPartner) {
+            const list = partners.map((p) => `  ${p.slug.current}`).join("\n");
+            await sendTelegramMessage(chatId, `❌ Unbekannter Partner: ${arg}\n\nVerfügbar:\n${list}`);
+            return NextResponse.json({ ok: true });
+          }
+
+          if (!activeRaceId) {
+            await sendTelegramMessage(chatId, "⚠️ Zuerst ein Rennen starten mit /rennen <slug>");
+            return NextResponse.json({ ok: true });
+          }
+
+          await setTickerSponsor(arg);
+          await invalidateTickerCache();
+          await sendTelegramMessage(chatId, `✅ Ticker-Sponsor: ${sponsorPartner.name}\nWird oben und unten im Ticker angezeigt.`);
           return NextResponse.json({ ok: true });
         }
 
