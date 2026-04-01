@@ -193,21 +193,29 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
 
             {/* Media Gallery */}
             {(() => {
-              const media: MediaItem[] = messages
+              const allMedia: MediaItem[] = messages
                 .filter((m) => m.image_url && (m.type === "photo" || m.type === "video"))
                 .map((m) => ({ id: m.id, url: m.image_url!, type: m.type as "photo" | "video", caption: m.text }));
-              if (media.length === 0) return null;
-              return (
-                <div>
-                  <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-3">
-                    Impressionen
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {media.map((m, i) => (
+              if (allMedia.length === 0) return null;
+
+              const teamMedia = allMedia.filter((m) => {
+                const msg = messages.find((msg) => msg.id === m.id);
+                return msg && !msg.is_fan;
+              });
+              const fanMedia = allMedia.filter((m) => {
+                const msg = messages.find((msg) => msg.id === m.id);
+                return msg?.is_fan;
+              });
+
+              const renderGallery = (items: MediaItem[], indexOffset: number) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {items.map((m) => {
+                    const globalIndex = allMedia.findIndex((am) => am.id === m.id);
+                    return (
                       <button
                         key={m.id}
                         className="rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => setLightboxIndex(i)}
+                        onClick={() => setLightboxIndex(globalIndex)}
                       >
                         {m.type === "video" ? (
                           <video
@@ -225,14 +233,36 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                           />
                         )}
                       </button>
-                    ))}
-                  </div>
+                    );
+                  })}
+                </div>
+              );
+
+              return (
+                <div className="space-y-6">
+                  {teamMedia.length > 0 && (
+                    <div>
+                      <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-3">
+                        Impressionen
+                      </h4>
+                      {renderGallery(teamMedia, 0)}
+                    </div>
+                  )}
+                  {fanMedia.length > 0 && (
+                    <div>
+                      <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-3">
+                        <MaterialIcon name="groups" className="text-base mr-1" filled />
+                        Fan-Galerie
+                      </h4>
+                      {renderGallery(fanMedia, teamMedia.length)}
+                    </div>
+                  )}
 
                   {/* Lightbox */}
                   <AnimatePresence>
                     {lightboxIndex !== null && (
                       <MediaLightbox
-                        items={media}
+                        items={allMedia}
                         activeIndex={lightboxIndex}
                         onClose={() => setLightboxIndex(null)}
                         onNavigate={setLightboxIndex}

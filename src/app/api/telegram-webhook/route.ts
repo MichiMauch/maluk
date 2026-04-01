@@ -354,7 +354,7 @@ export async function POST(request: NextRequest) {
                 ? `📸 ${fanName}: ${originalCaption}`
                 : `📸 Fan-Foto von ${fanName}`;
 
-            await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
+            await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id, true);
             await invalidateTickerCache();
             await sendTelegramMessage(chatId, `✅ Fan-Foto von ${fanName} im Ticker`);
             return NextResponse.json({ ok: true });
@@ -375,7 +375,7 @@ export async function POST(request: NextRequest) {
                   ? `🎬 ${fanName}: ${originalCaption}`
                   : `🎬 Fan-Video von ${fanName}`;
 
-              await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
+              await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id, true);
               await invalidateTickerCache();
               await sendTelegramMessage(chatId, `✅ Fan-Video von ${fanName} im Ticker`);
               return NextResponse.json({ ok: true });
@@ -388,7 +388,7 @@ export async function POST(request: NextRequest) {
               ? `💬 ${fanName}: ${customCaption}`
               : `💬 ${fanName}: ${fanMsg.text}`;
 
-            await addTickerMessage(caption, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
+            await addTickerMessage(caption, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id, true);
             await invalidateTickerCache();
             await sendTelegramMessage(chatId, `✅ Fan-Nachricht von ${fanName} im Ticker`);
             return NextResponse.json({ ok: true });
