@@ -7,5 +7,6 @@ export { GameSection } from "./GameSection";
 export { Sponsors } from "./Sponsors";
 export { PitLaneGallery } from "./PitLaneGallery";
 export { LiveTicker } from "./LiveTicker";
+export { LiveTickerModal } from "./LiveTickerModal";
 export { MobileBottomBar } from "./MobileBottomBar";
 export { Footer } from "./Footer";

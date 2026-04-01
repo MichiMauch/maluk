@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo, Button, MaterialIcon } from "@/components/ui";
 import { SponsorModal } from "./SponsorModal";
+import { LiveTickerModal } from "./LiveTickerModal";
+import { useTickerStatus } from "@/hooks/useTickerStatus";
 
 const navLinks = [
   { label: "Home", href: "#" },
@@ -16,6 +18,16 @@ const navLinks = [
 export function Header() {
   const [sponsorOpen, setSponsorOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [tickerOpen, setTickerOpen] = useState(false);
+  const { isLive, status, activeRaceName, refresh } = useTickerStatus();
+
+  // Auto-open ticker modal on first visit when live
+  useEffect(() => {
+    if (isLive && !sessionStorage.getItem("ticker-auto-opened")) {
+      setTickerOpen(true);
+      sessionStorage.setItem("ticker-auto-opened", "1");
+    }
+  }, [isLive]);
 
   useEffect(() => {
     const handler = () => setSponsorOpen(true);
@@ -60,18 +72,87 @@ export function Header() {
             </nav>
 
             {/* Desktop CTA */}
-            <div className="hidden md:flex justify-end gap-4">
+            <div className="hidden md:flex justify-end items-center gap-3">
+              <AnimatePresence>
+                {isLive && (
+                  <motion.button
+                    onClick={() => setTickerOpen(true)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-sm font-bold cursor-pointer transition-colors"
+                    style={{ boxShadow: "0 0 16px rgba(220, 38, 38, 0.5)" }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      boxShadow: [
+                        "0 0 8px rgba(220, 38, 38, 0.4)",
+                        "0 0 20px rgba(220, 38, 38, 0.7)",
+                        "0 0 8px rgba(220, 38, 38, 0.4)",
+                      ],
+                    }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{
+                      opacity: { duration: 0.3 },
+                      scale: { duration: 0.3 },
+                      boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                  >
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+                    </span>
+                    <span>{status === "pause" ? "PAUSE" : "LIVE"}</span>
+                    {activeRaceName && (
+                      <span className="hidden lg:inline font-normal opacity-80">
+                        {activeRaceName}
+                      </span>
+                    )}
+                  </motion.button>
+                )}
+              </AnimatePresence>
               <Button size="sm" onClick={() => setSponsorOpen(true)}>Sponsor werden</Button>
             </div>
 
-            {/* Mobile Hamburger */}
-            <button
-              className="md:hidden text-white p-2"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Menu"
-            >
-              <MaterialIcon name={menuOpen ? "close" : "menu"} className="text-2xl" />
-            </button>
+            {/* Mobile: Live Icon + Hamburger */}
+            <div className="flex md:hidden items-center gap-2">
+              <AnimatePresence>
+                {isLive && (
+                  <motion.button
+                    onClick={() => setTickerOpen(true)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold cursor-pointer"
+                    style={{ boxShadow: "0 0 12px rgba(220, 38, 38, 0.5)" }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      boxShadow: [
+                        "0 0 6px rgba(220, 38, 38, 0.4)",
+                        "0 0 16px rgba(220, 38, 38, 0.7)",
+                        "0 0 6px rgba(220, 38, 38, 0.4)",
+                      ],
+                    }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{
+                      opacity: { duration: 0.3 },
+                      scale: { duration: 0.3 },
+                      boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+                    </span>
+                    {status === "pause" ? "PAUSE" : "LIVE"}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+              <button
+                className="text-white p-2"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Menu"
+              >
+                <MaterialIcon name={menuOpen ? "close" : "menu"} className="text-2xl" />
+              </button>
+            </div>
           </div>
 
           {/* Mobile Menu */}
@@ -133,6 +214,13 @@ export function Header() {
       </motion.header>
 
       <SponsorModal open={sponsorOpen} onClose={() => setSponsorOpen(false)} />
+      <LiveTickerModal
+        open={tickerOpen}
+        onClose={() => {
+          setTickerOpen(false);
+          refresh();
+        }}
+      />
     </>
   );
 }

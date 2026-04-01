@@ -3,7 +3,6 @@ import { Header } from "@/components/sections/Header";
 import { Hero } from "@/components/sections/Hero";
 import { PilotMaschine } from "@/components/sections/PilotMaschine";
 import { RaceCalendar } from "@/components/sections/RaceCalendar";
-import { LiveTicker } from "@/components/sections/LiveTicker";
 import { Club100Section } from "@/components/sections/Club100Section";
 import { Sponsors } from "@/components/sections/Sponsors";
 import { MobileBottomBar } from "@/components/sections/MobileBottomBar";
@@ -82,9 +81,6 @@ export default function Home() {
           <PilotMaschine />
           <Suspense>
             <RaceCalendar />
-          </Suspense>
-          <Suspense>
-            <LiveTicker />
           </Suspense>
           <PitLaneGallery />
           <Club100Section />
