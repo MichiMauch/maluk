@@ -133,18 +133,20 @@ export function LiveTickerModal({ open, onClose }: LiveTickerModalProps) {
               <motion.div
                 key={msg.id}
                 className={`flex gap-3 p-3 rounded-xl border ${
-                  msg.type === "result"
-                    ? "bg-[#3a2d00] border-primary/40"
-                    : msg.type === "status"
-                      ? "bg-[#2a1010] border-accent/40"
-                      : "bg-[#403520] border-primary/25"
+                  msg.is_fan
+                    ? "bg-[#0a2a2a] border-cyan-500/30"
+                    : msg.type === "result"
+                      ? "bg-[#3a2d00] border-primary/40"
+                      : msg.type === "status"
+                        ? "bg-[#2a1010] border-accent/40"
+                        : "bg-[#403520] border-primary/25"
                 }`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.03 }}
               >
                 <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-                  <MessageIcon type={msg.type} size="text-base" />
+                  <MessageIcon type={msg.type} size="text-base" isFan={msg.is_fan} />
                   <span className="text-[10px] text-primary/60 font-mono font-bold">
                     {formatTickerTime(msg.created_at)}
                   </span>

@@ -296,18 +296,20 @@ export function RaceRecapModal({ open, onClose, raceSlug, raceName }: RaceRecapM
                           )}
                           <motion.div
                             className={`flex gap-3 p-3 rounded-lg border ${
-                              msg.type === "result"
-                                ? "bg-primary/10 border-primary/20"
-                                : msg.type === "status"
-                                  ? "bg-accent/10 border-accent/20"
-                                  : "bg-white/5 border-white/5"
+                              msg.is_fan
+                                ? "bg-cyan-500/10 border-cyan-500/20"
+                                : msg.type === "result"
+                                  ? "bg-primary/10 border-primary/20"
+                                  : msg.type === "status"
+                                    ? "bg-accent/10 border-accent/20"
+                                    : "bg-white/5 border-white/5"
                             }`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: index * 0.02 }}
                           >
                             <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-                              <MessageIcon type={msg.type} />
+                              <MessageIcon type={msg.type} isFan={msg.is_fan} />
                               <span className="text-[10px] text-gray-500 font-mono">
                                 {formatTickerTime(msg.created_at)}
                               </span>

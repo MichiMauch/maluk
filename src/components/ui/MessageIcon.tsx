@@ -2,7 +2,18 @@
 
 import { MaterialIcon } from "./MaterialIcon";
 
-export function MessageIcon({ type, size = "text-sm" }: { type: string; size?: string }) {
+export function MessageIcon({ type, size = "text-sm", isFan = false }: { type: string; size?: string; isFan?: boolean }) {
+  if (isFan) {
+    switch (type) {
+      case "photo":
+        return <MaterialIcon name="photo_camera" className={`text-cyan-400 ${size}`} filled />;
+      case "video":
+        return <MaterialIcon name="videocam" className={`text-cyan-400 ${size}`} filled />;
+      default:
+        return <MaterialIcon name="groups" className={`text-cyan-400 ${size}`} filled />;
+    }
+  }
+
   switch (type) {
     case "photo":
       return <MaterialIcon name="photo_camera" className={`text-primary ${size}`} filled />;
