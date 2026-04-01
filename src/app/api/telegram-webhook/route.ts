@@ -353,7 +353,6 @@ export async function POST(request: NextRequest) {
 
             await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
             await invalidateTickerCache();
-            await forwardToChannel(caption, largestPhoto.file_id, "photo");
             await sendTelegramMessage(chatId, `✅ Fan-Foto von ${fanName} im Ticker`);
             return NextResponse.json({ ok: true });
           }
@@ -372,7 +371,6 @@ export async function POST(request: NextRequest) {
 
               await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
               await invalidateTickerCache();
-              await forwardToChannel(caption, fanVideo.file_id, "video");
               await sendTelegramMessage(chatId, `✅ Fan-Video von ${fanName} im Ticker`);
               return NextResponse.json({ ok: true });
             }
@@ -386,7 +384,6 @@ export async function POST(request: NextRequest) {
 
             await addTickerMessage(caption, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
             await invalidateTickerCache();
-            await forwardToChannel(caption);
             await sendTelegramMessage(chatId, `✅ Fan-Nachricht von ${fanName} im Ticker`);
             return NextResponse.json({ ok: true });
           }
