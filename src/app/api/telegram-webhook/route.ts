@@ -23,6 +23,7 @@ import {
 import { generateRaceSummary } from "@/lib/ai-summary";
 import { invalidateTickerCache } from "@/lib/redis";
 import { raceEvents2024, raceEvents2026 } from "@/data/calendar";
+import { partners } from "@/data/partners";
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 
@@ -171,6 +172,7 @@ export async function POST(request: NextRequest) {
                 ? "• /invite <chat_id> <name> → Teammitglied\n" +
                   "• /remove <chat_id> → Entfernen\n"
                 : "") +
+              "• /sponsor <slug> [Text] → Sponsor-Shoutout\n" +
               "• /fan → Antwort auf Fan-Nachricht → ins Ticker übernehmen\n" +
               "• /fan Text → mit eigener Beschreibung\n" +
               "• /delete → Antwort auf Nachricht → Ticker-Eintrag löschen\n" +
@@ -329,6 +331,35 @@ export async function POST(request: NextRequest) {
           }
           await removeAdmin(removeChatId);
           await sendTelegramMessage(chatId, `✅ ${removeChatId} entfernt`);
+          return NextResponse.json({ ok: true });
+        }
+
+        case "sponsor": {
+          const arg = parsed.args.trim();
+          if (!arg) {
+            const list = partners.map((p) => `  ${p.slug.current} — ${p.name} (${p.tier})`).join("\n");
+            await sendTelegramMessage(chatId, `Verwendung: /sponsor <slug> [Text]\n\nVerfügbare Partner:\n${list}`);
+            return NextResponse.json({ ok: true });
+          }
+
+          const [slugArg, ...textParts] = arg.split(/\s+/);
+          const partner = partners.find((p) => p.slug.current === slugArg);
+          if (!partner) {
+            const list = partners.map((p) => `  ${p.slug.current}`).join("\n");
+            await sendTelegramMessage(chatId, `❌ Unbekannter Partner: ${slugArg}\n\nVerfügbar:\n${list}`);
+            return NextResponse.json({ ok: true });
+          }
+
+          const tierLabel = { platinum: "Platin", gold: "Gold", silver: "Silber", bronze: "Bronze" }[partner.tier];
+          const customText = textParts.join(" ");
+          const sponsorText = customText
+            ? `🤝 ${partner.name} (${tierLabel}-Partner): ${customText}`
+            : `🤝 Danke an unseren ${tierLabel}-Partner ${partner.name}!`;
+
+          await addTickerMessage(sponsorText, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
+          await invalidateTickerCache();
+          await forwardToChannel(sponsorText);
+          await sendTelegramMessage(chatId, `✅ Sponsor-Shoutout für ${partner.name} gepostet`);
           return NextResponse.json({ ok: true });
         }
 
