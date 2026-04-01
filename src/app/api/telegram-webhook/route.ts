@@ -83,10 +83,10 @@ export async function POST(request: NextRequest) {
   // Handle edited messages
   if (update.edited_message) {
     const edited = update.edited_message;
-    const chatId = String(edited.chat.id);
+    const editUserId = String(edited.from.id);
 
     await initTickerTables();
-    const authorized = await isAdmin(chatId);
+    const authorized = await isAdmin(editUserId);
     if (!authorized) return NextResponse.json({ ok: true });
 
     const newText = edited.text || edited.caption;
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       );
       if (updated) {
         await invalidateTickerCache();
-        await sendTelegramMessage(chatId, "✅ Ticker-Eintrag aktualisiert");
+        await sendTelegramMessage(String(edited.chat.id), "✅ Ticker-Eintrag aktualisiert");
       }
     }
 
@@ -119,26 +119,31 @@ export async function POST(request: NextRequest) {
   }
 
   const chatId = String(message.chat.id);
+  const userId = String(message.from.id);
+  const isGroup = message.chat.id < 0;
 
   // /id works for everyone
   if (message.text?.trim() === "/id") {
-    await sendTelegramMessage(chatId, `Deine Chat-ID: ${chatId}`);
+    await sendTelegramMessage(chatId, `Deine Chat-ID: ${userId}\nDieser Chat: ${chatId}`);
     return NextResponse.json({ ok: true });
   }
 
   await initTickerTables();
 
-  const authorized = await isAdmin(chatId);
+  // In groups, check the sender's user ID; in private chats, chat ID = user ID
+  const authorized = await isAdmin(userId);
   if (!authorized) {
-    await sendTelegramMessage(
-      chatId,
-      `⛔ Du bist nicht berechtigt.\nDeine Chat-ID: ${chatId}\nSchick diese ID an den Admin, damit er dich mit /invite freischalten kann.`
-    );
+    if (!isGroup) {
+      await sendTelegramMessage(
+        chatId,
+        `⛔ Du bist nicht berechtigt.\nDeine Chat-ID: ${userId}\nSchick diese ID an den Admin, damit er dich mit /invite freischalten kann.`
+      );
+    }
     return NextResponse.json({ ok: true });
   }
 
   const primaryAdmin = process.env.TELEGRAM_ADMIN_CHAT_ID;
-  const isPrimaryAdmin = chatId === primaryAdmin;
+  const isPrimaryAdmin = userId === primaryAdmin;
   const activeRaceId = await getActiveRace();
 
   if (message.text) {
@@ -418,7 +423,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Regular text message
+    // Regular text message — only in private chat, not in groups
+    if (isGroup) return NextResponse.json({ ok: true });
     await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
     const channelErr = await forwardToChannel(message.text);
@@ -427,7 +433,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Photo message
+  // Photo message — only in private chat, not in groups (use /fan for group photos)
+  if (isGroup) return NextResponse.json({ ok: true });
   if (message.photo && message.photo.length > 0) {
     const largestPhoto = message.photo[message.photo.length - 1];
     const imageUrl = await saveImageAsDataUrl(largestPhoto.file_id);
