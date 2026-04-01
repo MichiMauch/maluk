@@ -534,7 +534,7 @@ export async function POST(request: NextRequest) {
   if (message.photo && message.photo.length > 0) {
     const largestPhoto = message.photo[message.photo.length - 1];
     const imageUrl = await saveImageAsDataUrl(largestPhoto.file_id);
-    const caption = message.caption || "📸 Bild aus dem Fahrerlager";
+    const caption = message.caption || "";
 
     await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
@@ -561,7 +561,7 @@ export async function POST(request: NextRequest) {
     const buffer = await downloadTelegramFile(fileUrl);
     const mimeType = ("mime_type" in video && video.mime_type) ? video.mime_type : "video/mp4";
     const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
-    const caption = message.caption || "🎬 Video aus dem Fahrerlager";
+    const caption = message.caption || "";
 
     await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
