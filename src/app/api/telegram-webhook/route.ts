@@ -18,6 +18,7 @@ import {
   sendTelegramMessage,
   getTelegramFileUrl,
   downloadTelegramFile,
+  forwardToChannel,
 } from "@/lib/telegram";
 import { generateRaceSummary } from "@/lib/ai-summary";
 import { invalidateTickerCache } from "@/lib/redis";
@@ -160,6 +161,8 @@ export async function POST(request: NextRequest) {
                 ? "• /invite <chat_id> <name> → Teammitglied\n" +
                   "• /remove <chat_id> → Entfernen\n"
                 : "") +
+              "• /fan → Antwort auf Fan-Nachricht → ins Ticker übernehmen\n" +
+              "• /fan Text → mit eigener Beschreibung\n" +
               "• /delete → Antwort auf Nachricht → Ticker-Eintrag löschen\n" +
               "• Nachricht editieren → Ticker wird aktualisiert\n" +
               "• /clear → Ticker leeren\n\n" +
@@ -251,6 +254,7 @@ export async function POST(request: NextRequest) {
             arg
           );
           await invalidateTickerCache();
+          await forwardToChannel(`🏎 ${event?.name ?? arg} — Ticker gestartet`);
           await sendTelegramMessage(chatId, `✅ Rennen gestartet: ${event?.name ?? arg}\nAlle Nachrichten werden diesem Rennen zugeordnet.`);
           return NextResponse.json({ ok: true });
         }
@@ -269,6 +273,7 @@ export async function POST(request: NextRequest) {
                 : "🏁 Renntag beendet";
           await addTickerMessage(statusText, "status", undefined, status as "live" | "pause" | "ende", activeRaceId ?? undefined);
           await invalidateTickerCache();
+          await forwardToChannel(statusText);
           await sendTelegramMessage(chatId, `✅ Status: ${statusText}`);
           return NextResponse.json({ ok: true });
         }
@@ -280,6 +285,7 @@ export async function POST(request: NextRequest) {
           }
           await addTickerMessage(`🏆 Ergebnis: ${parsed.args}`, "result", undefined, undefined, activeRaceId ?? undefined, message.message_id);
           await invalidateTickerCache();
+          await forwardToChannel(`🏆 Ergebnis: ${parsed.args}`);
           await sendTelegramMessage(chatId, "✅ Ergebnis gepostet");
           return NextResponse.json({ ok: true });
         }
@@ -313,6 +319,68 @@ export async function POST(request: NextRequest) {
           }
           await removeAdmin(removeChatId);
           await sendTelegramMessage(chatId, `✅ ${removeChatId} entfernt`);
+          return NextResponse.json({ ok: true });
+        }
+
+        case "fan": {
+          const fanMsg = message.reply_to_message;
+          if (!fanMsg) {
+            await sendTelegramMessage(chatId, "Verwendung: Auf ein Fan-Foto/Nachricht antworten mit /fan oder /fan Toller Schnappschuss!");
+            return NextResponse.json({ ok: true });
+          }
+
+          const fanName = fanMsg.from?.first_name ?? "Fan";
+          const customCaption = parsed.args || null;
+
+          // Fan photo
+          if (fanMsg.photo && fanMsg.photo.length > 0) {
+            const largestPhoto = fanMsg.photo[fanMsg.photo.length - 1];
+            const imageUrl = await saveImageAsDataUrl(largestPhoto.file_id);
+            const caption = customCaption
+              ? `📸 ${fanName}: ${customCaption}`
+              : `📸 Fan-Foto von ${fanName}`;
+
+            await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
+            await invalidateTickerCache();
+            await forwardToChannel(caption, largestPhoto.file_id, "photo");
+            await sendTelegramMessage(chatId, `✅ Fan-Foto von ${fanName} im Ticker`);
+            return NextResponse.json({ ok: true });
+          }
+
+          // Fan video
+          const fanVideo = fanMsg.video ?? fanMsg.video_note;
+          if (fanVideo) {
+            const fileUrl = await getTelegramFileUrl(fanVideo.file_id);
+            if (fileUrl) {
+              const buffer = await downloadTelegramFile(fileUrl);
+              const mimeType = ("mime_type" in fanVideo && fanVideo.mime_type) ? fanVideo.mime_type : "video/mp4";
+              const dataUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
+              const caption = customCaption
+                ? `🎬 ${fanName}: ${customCaption}`
+                : `🎬 Fan-Video von ${fanName}`;
+
+              await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
+              await invalidateTickerCache();
+              await forwardToChannel(caption, fanVideo.file_id, "video");
+              await sendTelegramMessage(chatId, `✅ Fan-Video von ${fanName} im Ticker`);
+              return NextResponse.json({ ok: true });
+            }
+          }
+
+          // Fan text
+          if (fanMsg.text) {
+            const caption = customCaption
+              ? `💬 ${fanName}: ${customCaption}`
+              : `💬 ${fanName}: ${fanMsg.text}`;
+
+            await addTickerMessage(caption, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
+            await invalidateTickerCache();
+            await forwardToChannel(caption);
+            await sendTelegramMessage(chatId, `✅ Fan-Nachricht von ${fanName} im Ticker`);
+            return NextResponse.json({ ok: true });
+          }
+
+          await sendTelegramMessage(chatId, "⚠️ Diese Nachricht enthält keinen unterstützten Inhalt (Text, Foto oder Video).");
           return NextResponse.json({ ok: true });
         }
 
@@ -353,6 +421,7 @@ export async function POST(request: NextRequest) {
     // Regular text message
     await addTickerMessage(message.text, "text", undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
+    await forwardToChannel(message.text);
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
@@ -365,6 +434,7 @@ export async function POST(request: NextRequest) {
 
     await addTickerMessage(caption, "photo", imageUrl ?? undefined, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
+    await forwardToChannel(caption, largestPhoto.file_id, "photo");
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Bild gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Bild im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
@@ -391,6 +461,7 @@ export async function POST(request: NextRequest) {
 
     await addTickerMessage(caption, "video", dataUrl, undefined, activeRaceId ?? undefined, message.message_id);
     await invalidateTickerCache();
+    await forwardToChannel(caption, video.file_id, "video");
     await sendTelegramMessage(chatId, activeRaceId ? `✅ Video gepostet (${findEventBySlug(activeRaceId)?.name ?? activeRaceId})` : "✅ Video im Ticker gepostet");
     return NextResponse.json({ ok: true });
   }
