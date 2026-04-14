@@ -139,6 +139,18 @@ export const partners: Partner[] = [
     },
     website: "https://wirz-schriften.ch",
   },
+  {
+    _id: "partner-011",
+    _type: "partner",
+    slug: { current: "hauri-autotechnik" },
+    name: "Hauri Autotechnik",
+    tier: "silver",
+    logo: {
+      url: "/images/sponsors/hauri.avif",
+      alt: "Hauri Autotechnik",
+    },
+    website: "https://www.hauriautotechnik.ch/",
+  },
 ];
 
 export const club100Stats = {
