@@ -146,7 +146,7 @@ export const partners: Partner[] = [
     name: "Hauri Autotechnik",
     tier: "silver",
     logo: {
-      url: "/images/sponsors/hauri.avif",
+      url: "/images/sponsors/hauri.png",
       alt: "Hauri Autotechnik",
     },
     website: "https://www.hauriautotechnik.ch/",
