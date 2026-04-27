@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "maluk",
+  "project_id": "facfd507-4ee6-435f-a029-50f0ae5f9986"
+}
