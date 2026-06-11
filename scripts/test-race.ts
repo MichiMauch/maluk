@@ -108,7 +108,7 @@ async function run() {
         role: "user",
         content: `Du bist der Texter für MALUK Racing, das Bergrennen-Team von Lukas Maurer mit seinem Opel Kadett C GT/E in der Schweiz.
 
-Erstelle aus dem folgenden Live-Ticker-Verlauf einen packenden, kurzen Rennbericht (3-5 Absätze) auf Deutsch. Schreibe in der dritten Person über Lukas/MALUK Racing. Der Bericht soll die Highlights, Ergebnisse und die Atmosphäre einfangen.
+Erstelle aus dem folgenden Live-Ticker-Verlauf einen packenden, kurzen Rennbericht (3-5 Absätze) auf Deutsch. Schreibe in der Ich-Form aus der Sicht von Lukas, dem Fahrer (z.B. "Ich bin am Morgen...", "mein Kadett..."). MALUK Racing oder das Team kannst du als "wir" erwähnen. Der Bericht soll die Highlights, Ergebnisse und die Atmosphäre einfangen.
 
 Rennen: ${RACE_NAME}
 
