@@ -21,10 +21,17 @@ export function PartnerScrollBar({ size = "md" }: PartnerScrollBarProps) {
       <div className="flex gap-8 animate-[hero-scroll_20s_linear_infinite] w-max">
         {[...partners, ...partners].map((partner, i) => {
           if (!partner.logo) return null;
+          const preserveColors = partner.preserveColors;
           const logo = (
             <div
-              className={`relative ${logoHeight} ${logoWidth} flex-shrink-0`}
-              style={{ filter: `brightness(0) invert(1) opacity(${opacity})` }}
+              className={`relative ${logoHeight} ${logoWidth} flex-shrink-0 ${
+                preserveColors ? "bg-white rounded-sm px-1" : ""
+              }`}
+              style={
+                preserveColors
+                  ? { opacity }
+                  : { filter: `brightness(0) invert(1) opacity(${opacity})` }
+              }
             >
               <Image
                 src={partner.logo.url}
