@@ -1,5 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const COOKIE_NAME = "admin_session";
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+
+async function hmacSha256(key: string, data: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(key),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(data));
+  return Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function verifyAdminToken(token: string): Promise<boolean> {
+  if (!ADMIN_PASSWORD) return false;
+  const [timestamp, hmac] = token.split(".");
+  if (!timestamp || !hmac) return false;
+
+  const expected = await hmacSha256(ADMIN_PASSWORD, timestamp);
+  if (hmac !== expected) return false;
+
+  const age = Date.now() - parseInt(timestamp, 10);
+  return age < COOKIE_MAX_AGE * 1000;
+}
+
 // Simple in-memory rate limiter
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
@@ -29,7 +60,7 @@ setInterval(() => {
   }
 }, 300_000);
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // www → non-www redirect
   const host = request.headers.get("host") ?? "";
   if (host.startsWith("www.")) {
@@ -49,6 +80,23 @@ export function middleware(request: NextRequest) {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=()"
   );
+
+  // Admin auth check (except login page and auth API)
+  const path = request.nextUrl.pathname;
+  const isAdminRoute = path.startsWith("/admin") || path.startsWith("/api/admin");
+  const isAuthRoute = path === "/admin/login" || path === "/api/admin/auth";
+
+  if (isAdminRoute && !isAuthRoute) {
+    const token = request.cookies.get(COOKIE_NAME)?.value;
+    if (!token || !(await verifyAdminToken(token))) {
+      if (path.startsWith("/api/")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("redirect", path);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   // Rate limiting for API routes only
   if (request.nextUrl.pathname.startsWith("/api/")) {
