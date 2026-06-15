@@ -13,6 +13,7 @@ import {
   clearActiveRace,
   getMessagesByRace,
   saveSummary,
+  getSummary,
   setTickerSponsor,
   clearTickerSponsor,
 } from "@/lib/ticker";
@@ -26,6 +27,13 @@ import { generateRaceSummary } from "@/lib/ai-summary";
 import { invalidateTickerCache } from "@/lib/redis";
 import { raceEvents2024, raceEvents2026 } from "@/data/calendar";
 import { partners } from "@/data/partners";
+import {
+  addMailingListEntry,
+  removeMailingListEntry,
+  getMailingList,
+  getMailingListCount,
+} from "@/lib/mailing-list";
+import { sendRaceReport } from "@/lib/mail";
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET;
 
@@ -180,7 +188,11 @@ export async function POST(request: NextRequest) {
               "• /fan Text → mit eigener Beschreibung\n" +
               "• /delete → Antwort auf Nachricht → Ticker-Eintrag löschen\n" +
               "• Nachricht editieren → Ticker wird aktualisiert\n" +
-              "• /clear → Ticker leeren\n\n" +
+              "• /clear → Ticker leeren\n" +
+              "• /mail list → Empfängerliste\n" +
+              "• /mail add <email> [name] → Hinzufügen\n" +
+              "• /mail remove <email> → Entfernen\n" +
+              "• /mail send <slug> → Rennbericht versenden\n\n" +
               "Verfügbare Rennen-Slugs:\n" +
               validSlugs.map((s) => `  ${s}`).join("\n")
           );
@@ -220,10 +232,12 @@ export async function POST(request: NextRequest) {
             const event = findEventBySlug(activeRaceId);
             const raceName = event?.name ?? activeRaceId;
 
-            await clearActiveRace();
             await sendTelegramMessage(chatId, `🏁 ${raceName} beendet. Erstelle Zusammenfassung...`);
 
-            // Generate AI summary
+            // Generate AI summary. IMPORTANT: we only clear the active race AFTER
+            // the summary succeeded. If generation fails (e.g. API hiccup), the
+            // race stays active so the user can simply send "/rennen ende" again
+            // to retry — no data lost, no new command to learn.
             try {
               const messages = await getMessagesByRace(activeRaceId);
               if (messages.length > 0) {
@@ -233,8 +247,13 @@ export async function POST(request: NextRequest) {
               } else {
                 await sendTelegramMessage(chatId, "⚠️ Keine Nachrichten für dieses Rennen — kein Bericht erstellt.");
               }
+              await clearActiveRace();
             } catch (err) {
-              await sendTelegramMessage(chatId, `❌ Fehler bei Zusammenfassung: ${err instanceof Error ? err.message : "Unbekannt"}`);
+              // Do NOT clear the active race — keep it so the user can retry.
+              await sendTelegramMessage(
+                chatId,
+                `❌ Fehler bei Zusammenfassung: ${err instanceof Error ? err.message : "Unbekannt"}\n\nDas Rennen ist noch aktiv. Sende einfach nochmal /rennen ende, um es erneut zu versuchen.`
+              );
             }
 
             return NextResponse.json({ ok: true });
@@ -498,6 +517,119 @@ export async function POST(request: NextRequest) {
           } else {
             await sendTelegramMessage(chatId, "⚠️ Eintrag nicht gefunden (evtl. vor dem Update erstellt)");
           }
+          return NextResponse.json({ ok: true });
+        }
+
+        case "mail": {
+          const [subcommand, ...rest] = parsed.args.split(/\s+/).filter(Boolean);
+
+          if (!subcommand || subcommand === "help") {
+            const count = await getMailingListCount();
+            await sendTelegramMessage(
+              chatId,
+              `📧 Mailingliste (${count} Empfänger)\n\n` +
+                "/mail list → Alle anzeigen\n" +
+                "/mail add <email> [name] → Hinzufügen\n" +
+                "/mail remove <email> → Entfernen\n" +
+                "/mail send <slug> → Rennbericht versenden"
+            );
+            return NextResponse.json({ ok: true });
+          }
+
+          if (subcommand === "list") {
+            const entries = await getMailingList();
+            if (entries.length === 0) {
+              await sendTelegramMessage(chatId, "📧 Mailingliste ist leer.");
+              return NextResponse.json({ ok: true });
+            }
+            const lines = entries.map(
+              (e, i) => `${i + 1}. ${e.email}${e.name ? ` (${e.name})` : ""}`
+            );
+            // Telegram max message length is 4096
+            const text = `📧 Mailingliste (${entries.length}):\n\n${lines.join("\n")}`;
+            await sendTelegramMessage(chatId, text.slice(0, 4000));
+            return NextResponse.json({ ok: true });
+          }
+
+          if (subcommand === "add") {
+            const email = rest[0];
+            const name = rest.slice(1).join(" ") || undefined;
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+              await sendTelegramMessage(chatId, "Verwendung: /mail add <email> [name]");
+              return NextResponse.json({ ok: true });
+            }
+            await addMailingListEntry(email, name);
+            const count = await getMailingListCount();
+            await sendTelegramMessage(chatId, `✅ ${email} hinzugefügt (${count} Empfänger total)`);
+            return NextResponse.json({ ok: true });
+          }
+
+          if (subcommand === "remove") {
+            const email = rest[0];
+            if (!email) {
+              await sendTelegramMessage(chatId, "Verwendung: /mail remove <email>");
+              return NextResponse.json({ ok: true });
+            }
+            const removed = await removeMailingListEntry(email);
+            if (removed) {
+              const count = await getMailingListCount();
+              await sendTelegramMessage(chatId, `✅ ${email} entfernt (${count} Empfänger übrig)`);
+            } else {
+              await sendTelegramMessage(chatId, `⚠️ ${email} nicht gefunden`);
+            }
+            return NextResponse.json({ ok: true });
+          }
+
+          if (subcommand === "send") {
+            const slug = rest[0];
+            if (!slug) {
+              await sendTelegramMessage(
+                chatId,
+                "Verwendung: /mail send <slug>\n\nVerfügbare Slugs:\n" +
+                  validSlugs.map((s) => `  ${s}`).join("\n")
+              );
+              return NextResponse.json({ ok: true });
+            }
+
+            const event = findEventBySlug(slug);
+            if (!event) {
+              await sendTelegramMessage(chatId, `❌ Unbekannter Slug: ${slug}`);
+              return NextResponse.json({ ok: true });
+            }
+
+            const summary = await getSummary(slug);
+            if (!summary) {
+              await sendTelegramMessage(chatId, `❌ Kein Rennbericht für ${event.name} vorhanden.`);
+              return NextResponse.json({ ok: true });
+            }
+
+            const recipients = await getMailingList();
+            if (recipients.length === 0) {
+              await sendTelegramMessage(chatId, "⚠️ Mailingliste ist leer.");
+              return NextResponse.json({ ok: true });
+            }
+
+            await sendTelegramMessage(
+              chatId,
+              `📧 Sende Rennbericht "${event.name}" an ${recipients.length} Empfänger...`
+            );
+
+            try {
+              const result = await sendRaceReport(recipients, event.name, summary.summary);
+              const msg = result.errors.length > 0
+                ? `📧 ${result.sent} gesendet, ${result.errors.length} Fehler:\n${result.errors.join("\n")}`
+                : `✅ Rennbericht an ${result.sent} Empfänger gesendet!`;
+              await sendTelegramMessage(chatId, msg);
+            } catch (err) {
+              await sendTelegramMessage(
+                chatId,
+                `❌ Fehler beim Versand: ${err instanceof Error ? err.message : "Unbekannt"}`
+              );
+            }
+            return NextResponse.json({ ok: true });
+          }
+
+          await sendTelegramMessage(chatId, `Unbekannter Mail-Befehl: ${subcommand}`);
           return NextResponse.json({ ok: true });
         }
 

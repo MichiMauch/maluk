@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { TickerMessage } from "./ticker";
+import { ANTHROPIC_MODEL } from "./anthropic-model";
 
 export async function generateRaceSummary(
   messages: TickerMessage[],
@@ -33,7 +34,7 @@ export async function generateRaceSummary(
     .join("\n");
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: ANTHROPIC_MODEL,
     max_tokens: 1024,
     messages: [
       {

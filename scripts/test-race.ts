@@ -2,6 +2,7 @@ import { createClient } from "@libsql/client";
 import Anthropic from "@anthropic-ai/sdk";
 import * as dotenv from "dotenv";
 import { resolve } from "path";
+import { ANTHROPIC_MODEL } from "../src/lib/anthropic-model";
 
 dotenv.config({ path: resolve(__dirname, "../.env.local") });
 
@@ -101,7 +102,7 @@ async function run() {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: ANTHROPIC_MODEL,
     max_tokens: 1024,
     messages: [
       {

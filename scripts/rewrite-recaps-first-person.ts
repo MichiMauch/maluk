@@ -8,6 +8,7 @@ import { createClient } from "@libsql/client";
 import Anthropic from "@anthropic-ai/sdk";
 import { mkdirSync, writeFileSync } from "fs";
 import { resolve } from "path";
+import { ANTHROPIC_MODEL } from "../src/lib/anthropic-model";
 
 const turso = createClient({
   url: process.env.TURSO_DATABASE_URL!,
@@ -18,7 +19,7 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
 async function rewriteToFirstPerson(summary: string): Promise<string> {
   const response = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: ANTHROPIC_MODEL,
     max_tokens: 1024,
     messages: [
       {
