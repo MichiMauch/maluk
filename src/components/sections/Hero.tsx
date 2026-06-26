@@ -133,16 +133,21 @@ export function Hero() {
 
       {/* Onboard Video Lightbox */}
       <Modal open={videoOpen} onClose={() => setVideoOpen(false)}>
-        <div className="aspect-video rounded-lg overflow-hidden bg-black -m-6 md:-m-8">
-          {videoOpen && (
-            <iframe
-              src="https://www.youtube.com/embed/TPiVAVzI2Cs?autoplay=1"
-              title="Onboard Video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            />
-          )}
+        <div className="-m-6 md:-m-8">
+          <div className="aspect-video rounded-lg overflow-hidden bg-black">
+            {videoOpen && (
+              <iframe
+                src="https://www.youtube.com/embed/XEoXymAcfGI?autoplay=1"
+                title="Course de Cote La Roche - La Berra 2026"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            )}
+          </div>
+          <p className="mt-3 text-center text-sm font-medium text-white">
+            Course de Cote La Roche - La Berra 2026
+          </p>
         </div>
       </Modal>
     </section>
